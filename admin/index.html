@@ -187,22 +187,26 @@ button{font-family:inherit}
 .set-inp{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:var(--paper-soft);color:var(--ink);outline:none;transition:border-color .15s}
 .set-inp:focus{border-color:var(--accent)}
 .set-note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5;padding:10px 12px;background:var(--paper-soft);border-radius:6px}
-/* Integrations */
-.int-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px 24px;max-width:480px;margin-bottom:14px}
-.int-header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.int-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
+/* Integrations page */
+.int-page{display:flex;flex-direction:column;gap:12px;max-width:560px}
+.int-big-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.int-big-head{display:flex;align-items:center;gap:14px;padding:20px 24px}
+.int-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0}
 .int-icon-tg{background:#229ed9;color:#fff}
-.int-icon-md{background:#000;color:#fff;font-family:Georgia,serif;font-size:20px;font-weight:700}
-.int-title{font-size:14px;font-weight:600;color:var(--ink)}
-.int-sub{font-size:11px;color:var(--muted);margin-top:1px}
-.int-footer{display:flex;align-items:center;gap:10px;margin-top:16px}
-.int-status{font-size:11px;font-weight:500;display:flex;align-items:center;gap:5px}
-.int-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--muted2);flex-shrink:0}
-.int-status.ok{color:#16a34a}.int-status.ok::before{background:#16a34a}
-.int-status.err{color:#e53935}.int-status.err::before{background:#e53935}
+.int-icon-md{background:#000;color:#fff;font-family:Georgia,serif;font-size:22px}
+.int-big-name{font-size:14px;font-weight:600;color:var(--ink)}
+.int-big-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.int-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;background:var(--paper-soft);color:var(--muted2);border:1px solid var(--line);white-space:nowrap}
+.int-badge.connected{background:#dcfce7;color:#16a34a;border-color:#bbf7d0}
+.int-badge.active{background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
+.int-setup{display:none;border-top:1px solid var(--line)}
+.int-setup.open{display:block}
+.int-setup-inner{padding:20px 24px}
+.int-setup-footer{display:flex;align-items:center;gap:10px;margin-top:16px}
 .int-help{font-size:10px;color:var(--accent);font-weight:500;margin-left:6px}
+.int-sb-badge{display:inline-flex;align-items:center;justify-content:center;width:6px;height:6px;border-radius:50%;background:#16a34a;margin-left:auto;flex-shrink:0}
 /* Toggle switch */
-.toggle{position:relative;width:36px;height:20px;flex-shrink:0}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0;display:inline-flex}
 .toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-track{position:absolute;inset:0;background:var(--line);border-radius:20px;cursor:pointer;transition:background .2s}
 .toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
@@ -258,6 +262,11 @@ button{font-family:inherit}
         Новая статья
       </button>
       <div class="sb-section" style="margin-top:12px">Прочее</div>
+      <button class="sb-link" data-view="integrations" onclick="showView('integrations')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Интеграции
+        <span class="int-sb-badge" id="int-sb-badge" style="display:none"></span>
+      </button>
       <button class="sb-link" data-view="settings" onclick="showView('settings')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
         Настройки
@@ -301,6 +310,80 @@ button{font-family:inherit}
       </div>
 
       <!-- Settings view -->
+      <!-- Integrations view -->
+      <div class="view" id="view-integrations">
+        <div class="int-page">
+
+          <!-- Telegram card -->
+          <div class="int-big-card" id="intcard-tg">
+            <div class="int-big-head">
+              <div class="int-icon int-icon-tg">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.19-2.02 9.53c-.15.67-.54.84-1.09.52l-3-2.21-1.45 1.4c-.16.16-.3.3-.6.3l.21-3.03 5.5-4.97c.24-.21-.05-.33-.37-.12L7.08 14.4l-2.95-.92c-.64-.2-.65-.64.13-.95l11.54-4.45c.53-.19 1 .13.14.11z"/></svg>
+              </div>
+              <div style="flex:1">
+                <div class="int-big-name">Telegram</div>
+                <div class="int-big-desc" id="int-tg-desc">Пост в канал при публикации статьи</div>
+              </div>
+              <span class="int-badge" id="int-tg-badge">Не настроено</span>
+              <button class="btn-secondary" id="int-tg-toggle" onclick="toggleIntSetup('tg')" style="margin-left:12px">Настроить</button>
+            </div>
+            <div class="int-setup" id="int-setup-tg">
+              <div class="int-setup-inner">
+                <div class="set-row">
+                  <label class="set-lbl">Bot Token<a class="int-help" href="https://t.me/BotFather" target="_blank">→ @BotFather</a></label>
+                  <input class="set-inp" id="int-tg-token" type="password" placeholder="123456789:ABC-DEF...">
+                </div>
+                <div class="set-row" style="margin-bottom:0">
+                  <label class="set-lbl">Канал (@username или числовой ID)</label>
+                  <input class="set-inp" id="int-tg-channel" placeholder="@montas_news">
+                </div>
+                <div class="int-setup-footer">
+                  <button class="btn-secondary" id="int-tg-test" onclick="testTelegram()">Отправить тест</button>
+                  <label class="toggle" title="Включить">
+                    <input type="checkbox" id="int-tg-enabled" onchange="saveIntegrations()">
+                    <span class="toggle-track"></span>
+                  </label>
+                  <span style="font-size:12px;color:var(--muted)">Активна</span>
+                  <button class="btn-primary" onclick="saveIntegrations()" style="margin-left:auto">Сохранить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medium card -->
+          <div class="int-big-card" id="intcard-md">
+            <div class="int-big-head">
+              <div class="int-icon int-icon-md">M</div>
+              <div style="flex:1">
+                <div class="int-big-name">Medium</div>
+                <div class="int-big-desc" id="int-md-desc">Публикация через n8n / Make.com webhook</div>
+              </div>
+              <span class="int-badge" id="int-md-badge">Не настроено</span>
+              <button class="btn-secondary" id="int-md-toggle" onclick="toggleIntSetup('md')" style="margin-left:12px">Настроить</button>
+            </div>
+            <div class="int-setup" id="int-setup-md">
+              <div class="int-setup-inner">
+                <div class="set-row" style="margin-bottom:8px">
+                  <label class="set-lbl">Webhook URL (n8n или Make.com)</label>
+                  <input class="set-inp" id="int-md-webhook" type="url" placeholder="https://n8n.example.com/webhook/...">
+                </div>
+                <div class="set-note" style="margin-bottom:12px">Создайте workflow в <a href="https://n8n.io" target="_blank" style="color:var(--accent)">n8n.io</a>: Webhook → Medium API с вашим Integration Token. Вставьте URL вебхука выше.</div>
+                <div class="int-setup-footer">
+                  <button class="btn-secondary" id="int-md-test" onclick="testMedium()">Отправить тест</button>
+                  <label class="toggle" title="Включить">
+                    <input type="checkbox" id="int-md-enabled" onchange="saveIntegrations()">
+                    <span class="toggle-track"></span>
+                  </label>
+                  <span style="font-size:12px;color:var(--muted)">Активна</span>
+                  <button class="btn-primary" onclick="saveIntegrations()" style="margin-left:auto">Сохранить</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
       <div class="view" id="view-settings">
         <div class="set-card">
           <h3>Безопасность</h3>
@@ -323,63 +406,6 @@ button{font-family:inherit}
           </div>
           <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
         </div>
-        <!-- Telegram -->
-        <div class="int-card">
-          <div class="int-header">
-            <div class="int-icon int-icon-tg">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.19-2.02 9.53c-.15.67-.54.84-1.09.52l-3-2.21-1.45 1.4c-.16.16-.3.3-.6.3l.21-3.03 5.5-4.97c.24-.21-.05-.33-.37-.12L7.08 14.4l-2.95-.92c-.64-.2-.65-.64.13-.95l11.54-4.45c.53-.19 1 .13.14.11z"/></svg>
-            </div>
-            <div>
-              <div class="int-title">Telegram</div>
-              <div class="int-sub">Пост в канал при публикации статьи</div>
-            </div>
-            <label class="toggle" style="margin-left:auto" title="Включить интеграцию">
-              <input type="checkbox" id="int-tg-enabled">
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-          <div class="set-row">
-            <label class="set-lbl">Bot Token<a class="int-help" href="https://t.me/BotFather" target="_blank">→ получить у @BotFather</a></label>
-            <input class="set-inp" id="int-tg-token" type="password" placeholder="123456789:ABC-DEF1234...">
-          </div>
-          <div class="set-row" style="margin-bottom:0">
-            <label class="set-lbl">ID канала или @username</label>
-            <input class="set-inp" id="int-tg-channel" placeholder="@montas_blog или -1001234567890">
-          </div>
-          <div class="int-footer">
-            <button class="btn-secondary" id="int-tg-test" onclick="testTelegram()">Тест</button>
-            <span class="int-status" id="int-tg-status"></span>
-            <button class="btn-primary" onclick="saveIntegrations()" style="margin-left:auto">Сохранить</button>
-          </div>
-        </div>
-
-        <!-- Medium -->
-        <div class="int-card">
-          <div class="int-header">
-            <div class="int-icon int-icon-md">M</div>
-            <div>
-              <div class="int-title">Medium</div>
-              <div class="int-sub">Публикация через n8n или Make.com webhook</div>
-            </div>
-            <label class="toggle" style="margin-left:auto" title="Включить интеграцию">
-              <input type="checkbox" id="int-md-enabled">
-              <span class="toggle-track"></span>
-            </label>
-          </div>
-          <div class="set-row" style="margin-bottom:8px">
-            <label class="set-lbl">Webhook URL</label>
-            <input class="set-inp" id="int-md-webhook" type="url" placeholder="https://n8n.example.com/webhook/...">
-          </div>
-          <div class="set-note" style="margin-bottom:0;margin-top:0">
-            <b style="font-size:11px">Как подключить:</b> создайте workflow в <a href="https://n8n.io" target="_blank" style="color:var(--accent)">n8n.io</a> (бесплатно) — Webhook → Medium API с вашим токеном. Вставьте URL вебхука выше.
-          </div>
-          <div class="int-footer">
-            <button class="btn-secondary" id="int-md-test" onclick="testMedium()">Тест</button>
-            <span class="int-status" id="int-md-status"></span>
-            <button class="btn-primary" onclick="saveIntegrations()" style="margin-left:auto">Сохранить</button>
-          </div>
-        </div>
-
         <div class="set-card">
           <h3>Опасная зона</h3>
           <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Удалить все статьи из базы. Действие необратимо.</p>
@@ -641,7 +667,7 @@ function showView(name){
   document.querySelectorAll('.view-full').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
 
-  const titles={articles:'Статьи',editor:editingId?'Редактировать статью':'Новая статья',settings:'Настройки'};
+  const titles={articles:'Статьи',editor:editingId?'Редактировать статью':'Новая статья',settings:'Настройки',integrations:'Интеграции'};
   document.getElementById('mh-title').textContent=titles[name]||'';
 
   const acts=document.getElementById('mh-actions');
@@ -658,6 +684,9 @@ function showView(name){
     acts.innerHTML='<button class="btn-secondary" onclick="showView(\'articles\')">← К списку</button>';
   } else if(name==='settings'){
     document.getElementById('view-settings').classList.add('active');
+  } else if(name==='integrations'){
+    document.getElementById('view-integrations').classList.add('active');
+    refreshIntBadges();
   }
 
   // sidebar highlight
@@ -1016,13 +1045,47 @@ function initIntegrations(){
     document.getElementById('int-tg-enabled').checked=!!cfg.telegram.enabled;
     document.getElementById('int-tg-token').value=cfg.telegram.token||'';
     document.getElementById('int-tg-channel').value=cfg.telegram.channel||'';
-    if(cfg.telegram.token) setIntStatus('tg','ok');
   }
   if(cfg.medium){
     document.getElementById('int-md-enabled').checked=!!cfg.medium.enabled;
     document.getElementById('int-md-webhook').value=cfg.medium.webhook||'';
-    if(cfg.medium.webhook) setIntStatus('md','ok');
   }
+  refreshIntBadges();
+}
+
+function refreshIntBadges(){
+  const cfg=loadIntegrations();
+  const tg=cfg.telegram;
+  const md=cfg.medium;
+  const tgOk=tg?.token&&tg?.channel;
+  const mdOk=md?.webhook;
+  const tgBadge=document.getElementById('int-tg-badge');
+  const mdBadge=document.getElementById('int-md-badge');
+  const tgBtn=document.getElementById('int-tg-toggle');
+  const mdBtn=document.getElementById('int-md-toggle');
+  if(tgBadge){
+    tgBadge.textContent=tgOk?(tg.enabled?'Активна':'Подключено'):'Не настроено';
+    tgBadge.className='int-badge'+(tgOk&&tg.enabled?' active':tgOk?' connected':'');
+    if(tgBtn) tgBtn.textContent=tgOk?'Изменить':'Настроить';
+    if(tg?.channel) document.getElementById('int-tg-desc').textContent='Канал: '+tg.channel;
+  }
+  if(mdBadge){
+    mdBadge.textContent=mdOk?(md.enabled?'Активна':'Подключено'):'Не настроено';
+    mdBadge.className='int-badge'+(mdOk&&md.enabled?' active':mdOk?' connected':'');
+    if(mdBtn) mdBtn.textContent=mdOk?'Изменить':'Настроить';
+  }
+  // sidebar green dot
+  const sbDot=document.getElementById('int-sb-badge');
+  if(sbDot){const hasActive=(tgOk&&tg?.enabled)||(mdOk&&md?.enabled);sbDot.style.display=hasActive?'':'none';}
+}
+
+function toggleIntSetup(id){
+  const el=document.getElementById('int-setup-'+id);
+  el.classList.toggle('open');
+}
+
+function setIntStatus(id,state){
+  refreshIntBadges();
 }
 
 function saveIntegrations(){
@@ -1038,6 +1101,7 @@ function saveIntegrations(){
     }
   };
   saveIntegrationsToStorage(data);
+  refreshIntBadges();
   toast('Интеграции сохранены');
 }
 
