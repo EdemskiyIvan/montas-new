@@ -52,7 +52,7 @@ img{display:block;max-width:100%}
 /* HERO */
 .blog-hero{
   background:var(--paper);
-  padding:clamp(48px,6vw,80px) clamp(20px,4vw,64px) clamp(40px,5vw,64px);
+  padding:clamp(48px,6vw,80px) clamp(20px,4vw,64px) 0;
 }
 .blog-hero-inner{max-width:1280px;margin:0 auto;}
 .blog-hero-label{
@@ -72,13 +72,7 @@ img{display:block;max-width:100%}
 .blog-hero-sub{font-size:clamp(14px,1.2vw,16px);color:var(--muted);line-height:1.7;max-width:480px}
 @media(max-width:860px){.blog-hero-inner{grid-template-columns:1fr}}
 
-/* FILTER */
-.blog-filter{
-  padding:clamp(16px,2vw,24px) clamp(20px,4vw,64px);
-  background:var(--paper);
-  position:sticky;top:72px;z-index:50;
-}
-.blog-filter-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.blog-hero-filter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:clamp(32px,4vw,48px);padding-bottom:clamp(32px,4vw,48px)}
 .filter-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1}
 .filter-tab{
   font-family:'SF Mono',ui-monospace,monospace;
@@ -205,26 +199,21 @@ img{display:block;max-width:100%}
 
   <div class="blog-hero">
     <div class="blog-hero-inner">
-      <div>
-        <div class="blog-hero-label">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Блог MONTAS
+      <div class="blog-hero-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Блог MONTAS
+      </div>
+      <h1>Маркетинг, дизайн<br>и <em>рост бизнеса</em></h1>
+      <p class="blog-hero-sub">Делимся опытом, разбираем кейсы и рассказываем о том, что реально работает для малого и среднего бизнеса</p>
+      <div class="blog-hero-filter">
+        <div class="filter-tabs" id="filter-tabs">
+          <button class="filter-tab active" data-cat="">Все статьи</button>
         </div>
-        <h1>Маркетинг, дизайн<br>и <em>рост бизнеса</em></h1>
-        <p class="blog-hero-sub">Делимся опытом, разбираем кейсы и рассказываем о том, что реально работает для малого и среднего бизнеса</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="blog-filter" id="blog-filter">
-    <div class="blog-filter-inner">
-      <div class="filter-tabs" id="filter-tabs">
-        <button class="filter-tab active" data-cat="">Все статьи</button>
-      </div>
-      <div class="search-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input class="search-inp" id="search-inp" type="text" placeholder="Поиск по статьям…" autocomplete="off">
-        <button class="search-clear" id="search-clear" aria-label="Очистить">✕</button>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input class="search-inp" id="search-inp" type="text" placeholder="Поиск по статьям…" autocomplete="off">
+          <button class="search-clear" id="search-clear" aria-label="Очистить">✕</button>
+        </div>
       </div>
     </div>
   </div>
