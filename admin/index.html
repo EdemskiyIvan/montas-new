@@ -140,6 +140,23 @@ button{font-family:inherit}
 .st-btn.on-draft{border-color:var(--muted2);background:rgba(14,15,12,.05);color:var(--ink)}
 .st-btn.on-pub{border-color:#059669;background:rgba(16,185,129,.08);color:#059669}
 .cover-preview{width:100%;aspect-ratio:16/9;border-radius:8px;border:1px solid var(--line);object-fit:cover;background:var(--paper-soft);display:block;margin-top:8px}
+/* Cover upload zone */
+.cover-zone{width:100%;aspect-ratio:16/9;border:1.5px dashed var(--line);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:border-color .15s;background:var(--paper-soft);overflow:hidden;position:relative;margin-top:2px}
+.cover-zone:hover{border-color:var(--accent)}
+.cover-zone.drag-over{border-color:var(--accent);background:var(--accent-soft)}
+.cover-zone.has-img{border:none}
+.cover-zone-empty{display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+.cover-zone-empty svg{width:22px;height:22px;color:var(--muted2)}
+.cover-zone-empty span{font-size:12px;color:var(--muted);font-weight:500}
+.cover-zone-empty small{font-size:10px;color:var(--muted2);font-family:ui-monospace,monospace}
+.cover-zone-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.cover-zone-rm{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(14,15,12,.55);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;color:#fff;font-size:14px;line-height:1}
+.cover-zone.has-img .cover-zone-img{display:block}
+.cover-zone.has-img .cover-zone-rm{display:flex}
+.cover-zone.has-img .cover-zone-empty{display:none}
+.cover-tabs{display:flex;gap:4px;margin-bottom:6px}
+.ctab{padding:4px 10px;border-radius:6px;border:1px solid var(--line);font-family:inherit;font-size:11px;font-weight:500;cursor:pointer;background:transparent;color:var(--muted);transition:all .12s}
+.ctab.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .tags-input-row{display:flex;gap:6px;margin-bottom:6px}
 .tags-inp{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-family:inherit;font-size:12px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
 .tags-inp:focus{border-color:var(--accent)}
@@ -350,13 +367,39 @@ button{font-family:inherit}
             <textarea class="er-ta" id="e-excerpt" placeholder="Краткое описание для превью и SEO" rows="3"></textarea>
           </div>
           <div class="er-sec">
-            <label class="er-lbl" for="e-cover">Обложка (URL)</label>
-            <input class="er-inp" id="e-cover" type="url" placeholder="https://images.unsplash.com/..." oninput="updateCoverPreview()">
-            <img class="cover-preview" id="cover-preview" src="" alt="" onerror="this.style.display='none'" onload="this.style.display='block'">
+            <span class="er-lbl">Обложка</span>
+            <div class="cover-tabs">
+              <button class="ctab active" id="ctab-file" onclick="switchCoverTab('file')">Загрузить файл</button>
+              <button class="ctab" id="ctab-url" onclick="switchCoverTab('url')">URL</button>
+            </div>
+            <div id="cover-file-tab">
+              <div class="cover-zone" id="cover-zone" onclick="document.getElementById('cover-file-inp').click()">
+                <div class="cover-zone-empty">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <span>Нажмите или перетащите</span>
+                  <small>PNG, JPG, WEBP до 2 МБ</small>
+                </div>
+                <img class="cover-zone-img" id="cover-zone-img" src="" alt="">
+                <button class="cover-zone-rm" id="cover-zone-rm" onclick="clearCover(event)" title="Удалить">×</button>
+              </div>
+              <input type="file" id="cover-file-inp" accept="image/*" style="display:none" onchange="handleCoverFile(event)">
+            </div>
+            <div id="cover-url-tab" style="display:none">
+              <input class="er-inp" id="e-cover" type="url" placeholder="https://images.unsplash.com/..." oninput="onCoverUrlInput()">
+              <img class="cover-preview" id="cover-url-preview" src="" alt="" style="display:none" onerror="this.style.display='none'" onload="this.style.display='block'">
+            </div>
           </div>
           <div class="er-sec">
             <label class="er-lbl" for="e-author">Автор</label>
-            <input class="er-inp" id="e-author" type="text" placeholder="Имя автора">
+            <select class="er-sel" id="e-author">
+              <option value="">— Выбрать автора —</option>
+              <option value="Илья Берман">Илья Берман — Генеральный директор</option>
+              <option value="Иван Едемский">Иван Едемский — Технический директор</option>
+              <option value="Феликс Ишмухаметов">Феликс Ишмухаметов — Операционный директор</option>
+              <option value="Анастасия Королева">Анастасия Королева — Креативный директор</option>
+              <option value="Игорь Пропастенко">Игорь Пропастенко — Директор по маркетингу</option>
+              <option value="Тася Шеломова">Тася Шеломова — Руководитель отдела дизайна</option>
+            </select>
           </div>
           <div class="er-sec">
             <label class="er-lbl" for="e-date">Дата публикации</label>
@@ -577,11 +620,12 @@ function newArticle(){
   document.getElementById('e-title').value='';
   document.getElementById('e-slug').value='';
   document.getElementById('e-author').value='';
+  switchCoverTab('file');
   document.getElementById('e-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('e-category').value='Маркетинг';
   document.getElementById('e-excerpt').value='';
   document.getElementById('e-cover').value='';
-  const cp=document.getElementById('cover-preview');cp.src='';cp.style.display='none';
+  setCoverPreview('');
   document.getElementById('e-content').innerHTML='';
   document.getElementById('btn-del').style.display='none';
   setStatus('draft');
@@ -600,12 +644,22 @@ function editArticle(id){
   autoHeight(document.getElementById('e-title'));
   document.getElementById('e-slug').value=a.slug||'';
   document.getElementById('e-author').value=a.author||'';
+  switchCoverTab('file');
   document.getElementById('e-date').value=a.date||'';
   document.getElementById('e-category').value=a.category||'Маркетинг';
   document.getElementById('e-excerpt').value=a.excerpt||'';
-  document.getElementById('e-cover').value=a.cover||'';
-  const cp=document.getElementById('cover-preview');
-  if(a.cover){cp.src=a.cover;cp.style.display='block';}else{cp.src='';cp.style.display='none';}
+  document.getElementById('e-cover').value='';
+  // If cover looks like a URL (not base64), show in URL tab; else show in file tab as preview
+  if(a.cover&&a.cover.startsWith('data:')){
+    switchCoverTab('file');setCoverPreview(a.cover);
+  } else if(a.cover){
+    switchCoverTab('url');
+    document.getElementById('e-cover').value=a.cover;
+    const cp=document.getElementById('cover-url-preview');cp.src=a.cover;cp.style.display='block';
+    currentCoverData=a.cover;
+  } else {
+    switchCoverTab('file');setCoverPreview('');
+  }
   document.getElementById('e-content').innerHTML=a.content||'';
   document.getElementById('btn-del').style.display='';
   setStatus(a.status||'draft');
@@ -634,8 +688,8 @@ function saveArticle(){
     category:document.getElementById('e-category').value,
     tags:[...currentTags],
     excerpt:document.getElementById('e-excerpt').value.trim(),
-    cover:document.getElementById('e-cover').value.trim(),
-    author:document.getElementById('e-author').value.trim(),
+    cover:currentCoverData,
+    author:document.getElementById('e-author').value,
     date:document.getElementById('e-date').value,
     content:document.getElementById('e-content').innerHTML,
     createdAt:existing?existing.createdAt:now,
@@ -703,10 +757,59 @@ function toSlug(s){
 }
 
 // ── COVER ──
-function updateCoverPreview(){
+let currentCoverData=''; // base64 or URL
+
+function switchCoverTab(tab){
+  document.getElementById('ctab-file').classList.toggle('active',tab==='file');
+  document.getElementById('ctab-url').classList.toggle('active',tab==='url');
+  document.getElementById('cover-file-tab').style.display=tab==='file'?'':'none';
+  document.getElementById('cover-url-tab').style.display=tab==='url'?'':'none';
+}
+
+function setCoverPreview(src){
+  currentCoverData=src||'';
+  const zone=document.getElementById('cover-zone');
+  const img=document.getElementById('cover-zone-img');
+  if(src){img.src=src;zone.classList.add('has-img');}
+  else{img.src='';zone.classList.remove('has-img');}
+}
+
+function handleCoverFile(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>2*1024*1024){toast('Файл слишком большой. Максимум 2 МБ');return;}
+  const r=new FileReader();
+  r.onload=ev=>setCoverPreview(ev.target.result);
+  r.readAsDataURL(file);
+  e.target.value='';
+}
+
+function clearCover(e){
+  e.stopPropagation();
+  setCoverPreview('');
+  document.getElementById('e-cover').value='';
+  document.getElementById('cover-url-preview').style.display='none';
+}
+
+function onCoverUrlInput(){
   const url=document.getElementById('e-cover').value.trim();
-  const cp=document.getElementById('cover-preview');
-  if(url){cp.src=url;cp.style.display='block';}else{cp.src='';cp.style.display='none';}
+  currentCoverData=url;
+  const p=document.getElementById('cover-url-preview');
+  if(url){p.src=url;p.style.display='block';}else{p.src='';p.style.display='none';}
+}
+
+// Setup drag-and-drop on cover zone
+function initCoverDrop(){
+  const zone=document.getElementById('cover-zone');
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.classList.remove('drag-over');
+    const file=e.dataTransfer.files[0];
+    if(file&&file.type.startsWith('image/')){
+      if(file.size>2*1024*1024){toast('Файл слишком большой. Максимум 2 МБ');return;}
+      const r=new FileReader();r.onload=ev=>setCoverPreview(ev.target.result);r.readAsDataURL(file);
+    }
+  });
 }
 
 // ── PREVIEW ──
@@ -807,7 +910,12 @@ if(isAuth()){
   document.getElementById('login').style.display='none';
   document.getElementById('app').classList.add('visible');
   initApp();
+  initCoverDrop();
 }
+document.addEventListener('DOMContentLoaded',()=>{
+  if(!isAuth()) return;
+  initCoverDrop();
+});
 
 // close modals on overlay click
 document.getElementById('del-overlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
