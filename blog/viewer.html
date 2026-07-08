@@ -70,7 +70,9 @@ img{display:block;max-width:100%}
 /* CONTENT GRID */
 .article-content-wrap{display:grid;grid-template-columns:1fr minmax(0,680px) 1fr;padding:0 clamp(20px,4vw,64px);max-width:1280px;margin:0 auto}
 .article-aside-left{padding-top:4px}
-.article-content{grid-column:2}
+.article-content{grid-column:2;font-family:'Google Sans','Plus Jakarta Sans',system-ui,sans-serif}
+.article-content *{font-family:inherit !important}
+.article-content [style]{background-color:transparent !important;background:transparent !important}
 
 .article-content h2{font-size:clamp(20px,2.2vw,26px);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-top:clamp(36px,4vw,52px);margin-bottom:14px;line-height:1.25}
 .article-content h3{font-size:clamp(16px,1.6vw,20px);font-weight:600;letter-spacing:-.015em;color:var(--ink);margin-top:clamp(24px,3vw,36px);margin-bottom:10px}
@@ -185,10 +187,11 @@ function readingTime(html){
   return Math.max(1,Math.round(words/200))+' мин читать';
 }
 
-// Clean contenteditable artifacts
+// Clean contenteditable artifacts and strip inline styles/fonts injected by browser
 function cleanHtml(html){
   const el=document.createElement('div');
   el.innerHTML=html||'';
+  // remove empty divs
   el.querySelectorAll('div').forEach(div=>{
     const kids=[...div.childNodes];
     if(kids.length===0||(kids.length===1&&kids[0].nodeName==='BR')){div.remove();return;}
@@ -197,6 +200,20 @@ function cleanHtml(html){
       p.innerHTML=div.innerHTML;
       div.replaceWith(p);
     }
+  });
+  // strip inline style, font, bgcolor attributes from every element
+  el.querySelectorAll('[style],[face],[color],[bgcolor],[size]').forEach(node=>{
+    node.removeAttribute('style');
+    node.removeAttribute('face');
+    node.removeAttribute('color');
+    node.removeAttribute('bgcolor');
+    node.removeAttribute('size');
+  });
+  // unwrap <font> tags
+  el.querySelectorAll('font').forEach(font=>{
+    const frag=document.createDocumentFragment();
+    while(font.firstChild) frag.appendChild(font.firstChild);
+    font.replaceWith(frag);
   });
   return el.innerHTML;
 }
@@ -305,7 +322,7 @@ function render(){
           <span class="article-meta-dot">·</span>
           <span class="article-date">${fmtDate(art.date)}</span>
           <button class="share-btn" id="share-btn" onclick="copyLink(this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 6 12 2 16 6"/><line x1="12" y1="2" x2="12" y2="15"/><path d="M4 14v6a1 1 0 001 1h14a1 1 0 001-1v-6"/></svg>
             <span id="share-label">Поделиться</span>
           </button>
         </div>

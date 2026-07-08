@@ -118,7 +118,9 @@ button{font-family:inherit}
 .tb-btn:hover{background:var(--paper);color:var(--ink)}
 .tb-sep{width:1px;height:16px;background:var(--line);margin:0 4px;flex-shrink:0}
 /* Editable content */
-.editor-area{min-height:360px;outline:none;font-size:15px;line-height:1.85;color:var(--ink);caret-color:var(--accent)}
+.editor-area{min-height:360px;outline:none;font-size:15px;line-height:1.85;color:var(--ink);caret-color:var(--accent);font-family:'Google Sans',system-ui,sans-serif}
+.editor-area *{font-family:inherit !important}
+.editor-area [style]{background-color:transparent !important;background:transparent !important}
 .editor-area:empty::before{content:attr(data-placeholder);color:var(--muted2);pointer-events:none}
 .editor-area h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:28px 0 10px;line-height:1.25}
 .editor-area h3{font-size:17px;font-weight:600;margin:20px 0 8px;line-height:1.3}
@@ -530,6 +532,23 @@ function initApp(){
   renderStats();
   renderList();
   showView('articles');
+  // strip inline font/background on paste
+  document.getElementById('e-content').addEventListener('paste',e=>{
+    e.preventDefault();
+    const text=e.clipboardData.getData('text/html')||e.clipboardData.getData('text/plain');
+    const tmp=document.createElement('div');
+    tmp.innerHTML=text;
+    tmp.querySelectorAll('[style],[face],[color],[bgcolor],[size]').forEach(n=>{
+      n.removeAttribute('style');n.removeAttribute('face');
+      n.removeAttribute('color');n.removeAttribute('bgcolor');n.removeAttribute('size');
+    });
+    tmp.querySelectorAll('font').forEach(f=>{
+      const fr=document.createDocumentFragment();
+      while(f.firstChild) fr.appendChild(f.firstChild);
+      f.replaceWith(fr);
+    });
+    document.execCommand('insertHTML',false,tmp.innerHTML);
+  });
 }
 
 function updateSbCount(){
