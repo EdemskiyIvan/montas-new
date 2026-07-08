@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Статья — MONTAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0e0f0c;--paper:#fafafa;--paper-soft:#f1f0ec;--line:rgba(14,15,12,.12);--accent:#1a5cff;--accent-hover:#1448d6;--accent-soft:rgba(26,92,255,.08);--muted:rgba(14,15,12,.55);--muted2:rgba(14,15,12,.38)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Google Sans','Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.nav{position:fixed;left:0;right:0;top:0;z-index:100;width:100%;background:var(--paper);border-bottom:1px solid var(--line)}
+.nav-inner{width:100%;max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,64px);height:64px;gap:24px}
+.nav-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;letter-spacing:-.01em}
+.nav-sq{width:8px;height:8px;background:var(--accent);flex-shrink:0}
+.nav-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);transition:color .15s}
+.nav-back:hover{color:var(--ink)}
+.nav-cta{display:inline-flex;align-items:center;background:var(--accent);color:#fff;font-size:13px;font-weight:500;padding:8px 18px;border-radius:6px;transition:background .15s;white-space:nowrap}
+.nav-cta:hover{background:var(--accent-hover)}
+.page{padding-top:64px}
+/* Draft banner */
+.draft-banner{background:#fffbeb;border-bottom:1px solid #fde68a;padding:10px clamp(20px,4vw,64px);display:flex;align-items:center;gap:10px;font-size:13px;color:#92400e}
+.draft-banner svg{width:14px;height:14px;flex-shrink:0;color:#d97706}
+/* Article */
+.art-wrap{max-width:720px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,4vw,64px)}
+.art-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted2);margin-bottom:24px;flex-wrap:wrap}
+.art-breadcrumb a:hover{color:var(--accent)}
+.art-breadcrumb svg{width:11px;height:11px;flex-shrink:0}
+.art-category{font-family:ui-monospace,monospace;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.art-h1{font-size:clamp(28px,5vw,52px);font-weight:700;letter-spacing:-.03em;line-height:1.08;color:var(--ink);margin-bottom:16px}
+.art-meta-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+.art-author{font-size:13px;font-weight:500;color:var(--ink)}
+.art-date{font-size:12px;color:var(--muted)}
+.art-tags{display:flex;flex-wrap:wrap;gap:6px;margin-left:auto}
+.art-tag{font-size:11px;padding:4px 10px;border-radius:999px;background:var(--paper-soft);color:var(--muted);border:1px solid var(--line)}
+.art-cover{width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:10px;margin-bottom:40px;border:1px solid var(--line)}
+/* Prose */
+.prose{font-size:clamp(15px,1.3vw,18px);line-height:1.85;color:var(--ink)}
+.prose h2{font-size:clamp(20px,2.5vw,28px);font-weight:600;letter-spacing:-.02em;margin:40px 0 16px;line-height:1.2}
+.prose h3{font-size:clamp(17px,1.8vw,21px);font-weight:600;margin:30px 0 12px;line-height:1.25}
+.prose p{margin-bottom:20px}
+.prose p:last-child{margin-bottom:0}
+.prose blockquote{border-left:3px solid var(--accent);padding:16px 22px;background:var(--accent-soft);border-radius:0 10px 10px 0;margin:28px 0;color:var(--muted);font-style:italic;line-height:1.65}
+.prose ul,.prose ol{padding-left:24px;margin-bottom:20px}
+.prose li{margin-bottom:8px}
+.prose a{color:var(--accent);text-decoration:underline}
+.prose strong{font-weight:600}
+.prose em{font-style:italic}
+/* Footer nav */
+.art-footer{max-width:720px;margin:0 auto;padding:0 clamp(20px,4vw,64px) clamp(40px,6vw,72px);display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:32px;margin-top:48px}
+.art-footer-cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-size:14px;font-weight:500;padding:12px 22px;border-radius:6px;transition:background .15s}
+.art-footer-cta:hover{background:var(--accent-hover)}
+.edit-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);transition:color .15s}
+.edit-link:hover{color:var(--accent)}
+/* Error */
+.err-wrap{max-width:480px;margin:80px auto;text-align:center;padding:0 24px}
+.err-wrap h2{font-size:24px;font-weight:600;margin-bottom:12px}
+.err-wrap p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+/* Footer */
+.footer-s{background:var(--paper-soft);border-top:1px solid var(--line);padding:24px clamp(20px,4vw,64px)}
+.footer-s-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-s-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
+.footer-s-copy{font-size:11px;color:var(--muted2)}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><div class="nav-sq"></div>MONTAS</a>
+    <a href="/#blog" class="nav-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Все статьи
+    </a>
+    <a href="/#contact" class="nav-cta">Оставить заявку</a>
+  </div>
+</header>
+
+<div class="page" id="page-content">
+  <div class="err-wrap">
+    <p style="color:var(--muted)">Загрузка…</p>
+  </div>
+</div>
+
+<footer class="footer-s">
+  <div class="footer-s-inner">
+    <a href="/" class="footer-s-logo"><div style="width:7px;height:7px;background:#1a5cff;flex-shrink:0"></div>MONTAS</a>
+    <span class="footer-s-copy">© 2026 Montas. Все права защищены.</span>
+  </div>
+</footer>
+
+<script>
+const DB_KEY = 'montas_articles';
+const CHEVRON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:11px;height:11px"><path d="M9 18l6-6-6-6"/></svg>`;
+
+function getArticles(){
+  try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):[];}catch{return [];}
+}
+
+function fmtDate(d){
+  if(!d)return '';
+  try{
+    const dt=new Date(d+'T00:00:00');
+    const m=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    return dt.getDate()+' '+m[dt.getMonth()]+' '+dt.getFullYear();
+  }catch{return d}
+}
+
+function render(){
+  const params=new URLSearchParams(location.search);
+  const id=params.get('id');
+  const slug=params.get('slug');
+  const articles=getArticles();
+
+  const art=id
+    ?articles.find(a=>a.id===id)
+    :articles.find(a=>a.slug===slug);
+
+  const content=document.getElementById('page-content');
+
+  if(!art){
+    content.innerHTML=`
+      <div class="err-wrap">
+        <h2>Статья не найдена</h2>
+        <p>Возможно, статья была удалена или ещё не опубликована.</p>
+        <a href="/#blog" style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;font-size:14px;font-weight:500;padding:11px 22px;border-radius:6px">Все статьи</a>
+      </div>`;
+    return;
+  }
+
+  // Update page title
+  document.title=(art.title||'Статья')+' — MONTAS';
+
+  const isDraft=art.status==='draft';
+  const tags=(art.tags||[]).map(t=>`<span class="art-tag">${t}</span>`).join('');
+  const cover=art.cover?`<img class="art-cover" src="${art.cover}" alt="${art.title||''}">`: '';
+
+  content.innerHTML=`
+    ${isDraft?`<div class="draft-banner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Это черновик — статья не опубликована на сайте
+      <a href="/admin/" style="margin-left:auto;color:#d97706;font-weight:500;text-decoration:underline">Редактировать</a>
+    </div>`:''}
+    <div class="art-wrap">
+      <div class="art-breadcrumb">
+        <a href="/">Главная</a>${CHEVRON}
+        <a href="/#blog">Блог</a>${CHEVRON}
+        <span>${art.category||'Статья'}</span>
+      </div>
+      <div class="art-category">${art.category||''}</div>
+      <h1 class="art-h1">${art.title||''}</h1>
+      <div class="art-meta-row">
+        <span class="art-author">${art.author||'MONTAS'}</span>
+        <span class="art-date">${fmtDate(art.date)}</span>
+        ${tags?`<div class="art-tags">${tags}</div>`:''}
+      </div>
+      ${cover}
+      <div class="prose">${art.content||'<p>Содержимое статьи не добавлено.</p>'}</div>
+    </div>
+    <div class="art-footer">
+      <a href="/#contact" class="art-footer-cta">Обсудить проект
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="/admin/" class="edit-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Редактировать статью
+      </a>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>

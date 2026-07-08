@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Админка — MONTAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e0f0c;--paper:#fafafa;--paper-soft:#f1f0ec;
+  --line:rgba(14,15,12,.12);--accent:#1a5cff;--accent-hover:#1448d6;
+  --accent-soft:rgba(26,92,255,.08);--muted:rgba(14,15,12,.55);--muted2:rgba(14,15,12,.38);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Google Sans',system-ui,sans-serif;background:var(--paper-soft);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:rgba(14,15,12,.15);border-radius:4px}
+
+/* ── LOGIN ── */
+#login{
+  position:fixed;inset:0;background:var(--paper-soft);
+  display:flex;align-items:center;justify-content:center;z-index:999;
+}
+.lc{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:40px;width:340px}
+.lc-logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin-bottom:28px}
+.lc-sq{width:7px;height:7px;background:var(--accent);flex-shrink:0}
+.lc h2{font-size:20px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
+.lc-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.lc-lbl{display:block;font-size:11px;font-weight:500;color:var(--muted2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.lc-inp{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;background:var(--paper);outline:none;transition:border-color .15s}
+.lc-inp:focus{border-color:var(--accent)}
+.lc-err{font-size:12px;color:#e53935;margin-top:6px;min-height:18px}
+.lc-btn{margin-top:16px;width:100%;padding:11px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s}
+.lc-btn:hover{background:var(--accent-hover)}
+.lc-hint{font-size:11px;color:var(--muted2);text-align:center;margin-top:16px}
+
+/* ── SHELL ── */
+#app{display:none;height:100vh;width:100%;overflow:hidden;flex-direction:row}
+#app.visible{display:flex}
+.sb{width:216px;flex-shrink:0;height:100vh;overflow-y:auto;background:#0e0f0c;display:flex;flex-direction:column}
+.sb-logo{display:flex;align-items:center;gap:8px;padding:18px 16px;font-size:15px;font-weight:700;color:#fff;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-sq{width:7px;height:7px;background:var(--accent);flex-shrink:0}
+.sb-badge{font-size:9px;font-family:ui-monospace,monospace;letter-spacing:.06em;background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);padding:2px 6px;border-radius:4px;margin-left:4px}
+.sb-section{padding:16px 16px 4px;font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sb-nav{flex:1;padding:6px 8px}
+.sb-link{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;font-size:13px;color:rgba(255,255,255,.55);cursor:pointer;transition:background .12s,color .12s;margin-bottom:1px;border:none;background:transparent;width:100%;text-align:left}
+.sb-link:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.sb-link.active{background:rgba(255,255,255,.1);color:#fff}
+.sb-link svg{width:14px;height:14px;flex-shrink:0}
+.sb-count{margin-left:auto;font-size:11px;font-family:ui-monospace,monospace;background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:1px 6px;border-radius:4px}
+.sb-footer{padding:8px;border-top:1px solid rgba(255,255,255,.07);margin-top:auto}
+.sb-small{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:12px;color:rgba(255,255,255,.38);cursor:pointer;transition:color .12s;background:transparent;border:none;width:100%;text-align:left}
+.sb-small:hover{color:rgba(255,255,255,.65)}
+.sb-small svg{width:13px;height:13px;flex-shrink:0}
+
+/* ── MAIN ── */
+.main{flex:1;height:100vh;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.mh{flex-shrink:0;background:var(--paper);border-bottom:1px solid var(--line);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.mh-title{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.mh-actions{display:flex;gap:8px}
+.btn-primary{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;font-size:12px;font-weight:500;padding:7px 14px;border-radius:7px;border:none;cursor:pointer;transition:background .15s}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary svg{width:13px;height:13px}
+.btn-secondary{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);color:var(--ink);font-size:12px;font-weight:500;padding:7px 14px;border-radius:7px;background:transparent;cursor:pointer;transition:border-color .15s}
+.btn-secondary:hover{border-color:rgba(14,15,12,.3)}
+.mb{flex:1;overflow-y:auto}
+
+/* ── VIEWS ── */
+.view{display:none;padding:28px}
+.view.active{display:block}
+.view-full{display:none;flex:1;overflow:hidden;flex-direction:column}
+.view-full.active{display:flex}
+
+/* ── ARTICLES VIEW ── */
+.list-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.search-wrap{display:flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 12px;flex:1;max-width:280px}
+.search-wrap svg{width:14px;height:14px;color:var(--muted2);flex-shrink:0}
+.search-wrap input{border:none;outline:none;font-family:inherit;font-size:13px;background:transparent;width:100%;color:var(--ink)}
+.art-row{display:flex;align-items:center;gap:14px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s;margin-bottom:8px}
+.art-row:hover{border-color:rgba(26,92,255,.3)}
+.art-cover{width:52px;height:36px;border-radius:6px;object-fit:cover;background:var(--paper-soft);flex-shrink:0}
+.art-cover-ph{width:52px;height:36px;border-radius:6px;background:var(--paper-soft);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.art-cover-ph svg{width:16px;height:16px;color:var(--muted2)}
+.art-info{flex:1;min-width:0}
+.art-title{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.art-meta{font-size:11px;color:var(--muted);margin-top:3px;font-family:ui-monospace,monospace}
+.badge{font-size:10px;font-weight:500;font-family:ui-monospace,monospace;letter-spacing:.04em;padding:3px 9px;border-radius:999px;flex-shrink:0}
+.badge.published{background:rgba(16,185,129,.1);color:#059669}
+.badge.draft{background:var(--paper-soft);color:var(--muted2)}
+.row-actions{display:flex;gap:4px;flex-shrink:0}
+.row-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:500;border:1px solid var(--line);background:transparent;cursor:pointer;color:var(--muted);transition:all .12s}
+.row-btn:hover{border-color:rgba(14,15,12,.25);color:var(--ink)}
+.row-btn.del:hover{border-color:#e53935;color:#e53935}
+.empty{text-align:center;padding:56px 0;color:var(--muted)}
+.empty svg{width:36px;height:36px;margin:0 auto 12px;opacity:.3}
+.empty p{font-size:13px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 20px}
+.stat-n{font-size:28px;font-weight:700;letter-spacing:-.03em}
+.stat-l{font-size:12px;color:var(--muted);margin-top:3px}
+
+/* ── EDITOR ── */
+.editor-shell{flex:1;display:grid;grid-template-columns:1fr 272px;overflow:hidden}
+.editor-left{overflow-y:auto;padding:32px 36px;border-right:1px solid var(--line);background:var(--paper)}
+.editor-right{overflow-y:auto;padding:20px;background:var(--paper-soft)}
+.e-title{width:100%;font-family:'Google Sans',system-ui;font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-.03em;border:none;outline:none;background:transparent;color:var(--ink);resize:none;line-height:1.2;margin-bottom:6px}
+.e-slug-row{display:flex;align-items:center;gap:6px;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.e-slug-pre{font-size:11px;color:var(--muted2);font-family:ui-monospace,monospace;white-space:nowrap}
+.e-slug{border:none;outline:none;font-family:ui-monospace,monospace;font-size:11px;color:var(--accent);background:transparent;flex:1;min-width:0}
+/* Toolbar */
+.toolbar{display:flex;align-items:center;gap:1px;padding:6px 8px;background:var(--paper-soft);border:1px solid var(--line);border-radius:8px;margin-bottom:16px;flex-wrap:wrap}
+.tb-btn{padding:4px 8px;border-radius:5px;border:none;background:transparent;cursor:pointer;font-family:'Google Sans',ui-monospace,system-ui;font-size:12px;font-weight:600;color:var(--muted);transition:background .1s,color .1s;line-height:1.4;min-width:28px;text-align:center}
+.tb-btn:hover{background:var(--paper);color:var(--ink)}
+.tb-sep{width:1px;height:16px;background:var(--line);margin:0 4px;flex-shrink:0}
+/* Editable content */
+.editor-area{min-height:360px;outline:none;font-size:15px;line-height:1.85;color:var(--ink);caret-color:var(--accent)}
+.editor-area:empty::before{content:attr(data-placeholder);color:var(--muted2);pointer-events:none}
+.editor-area h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:28px 0 10px;line-height:1.25}
+.editor-area h3{font-size:17px;font-weight:600;margin:20px 0 8px;line-height:1.3}
+.editor-area p{margin-bottom:14px}
+.editor-area p:last-child{margin-bottom:0}
+.editor-area blockquote{border-left:3px solid var(--accent);padding:12px 18px;background:var(--accent-soft);border-radius:0 8px 8px 0;margin:20px 0;color:var(--muted);font-style:italic}
+.editor-area ul,.editor-area ol{padding-left:22px;margin-bottom:14px}
+.editor-area li{margin-bottom:5px}
+.editor-area a{color:var(--accent);text-decoration:underline}
+/* Sidebar fields */
+.er-sec{margin-bottom:20px}
+.er-lbl{display:block;font-size:10px;font-weight:500;color:var(--muted2);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px}
+.er-inp,.er-sel,.er-ta{width:100%;padding:8px 11px;border:1px solid var(--line);border-radius:7px;font-family:inherit;font-size:13px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
+.er-inp:focus,.er-sel:focus,.er-ta:focus{border-color:var(--accent)}
+.er-ta{resize:vertical;min-height:72px;line-height:1.6}
+.er-sel{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300000066' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;cursor:pointer}
+.status-row{display:flex;gap:6px}
+.st-btn{flex:1;padding:7px 8px;border-radius:7px;border:1px solid var(--line);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;background:transparent;color:var(--muted)}
+.st-btn.on-draft{border-color:var(--muted2);background:rgba(14,15,12,.05);color:var(--ink)}
+.st-btn.on-pub{border-color:#059669;background:rgba(16,185,129,.08);color:#059669}
+.cover-preview{width:100%;aspect-ratio:16/9;border-radius:8px;border:1px solid var(--line);object-fit:cover;background:var(--paper-soft);display:block;margin-top:8px}
+.tags-input-row{display:flex;gap:6px;margin-bottom:6px}
+.tags-inp{flex:1;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-family:inherit;font-size:12px;background:var(--paper);color:var(--ink);outline:none;transition:border-color .15s}
+.tags-inp:focus{border-color:var(--accent)}
+.tags-add{padding:7px 12px;border-radius:7px;border:1px solid var(--line);background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--ink);transition:border-color .15s}
+.tags-add:hover{border-color:rgba(14,15,12,.3)}
+.tags-wrap{display:flex;flex-wrap:wrap;gap:4px}
+.tag-chip{display:flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.tag-chip button{border:none;background:none;cursor:pointer;color:var(--accent);font-size:13px;line-height:1;padding:0;margin-left:1px;opacity:.6}
+.tag-chip button:hover{opacity:1}
+/* Save bar */
+.save-bar{flex-shrink:0;background:var(--paper);border-top:1px solid var(--line);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.save-info{font-size:11px;color:var(--muted2);font-family:ui-monospace,monospace}
+.save-actions{display:flex;gap:8px}
+.btn-save{background:var(--accent);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:13px;font-weight:500;padding:8px 18px;cursor:pointer;transition:background .15s}
+.btn-save:hover{background:var(--accent-hover)}
+.btn-del{border:1px solid var(--line);background:transparent;border-radius:7px;font-family:inherit;font-size:13px;color:var(--muted);padding:8px 14px;cursor:pointer;transition:all .15s}
+.btn-del:hover{border-color:#e53935;color:#e53935}
+.btn-prev{border:1px solid var(--line);background:transparent;border-radius:7px;font-family:inherit;font-size:13px;color:var(--muted);padding:8px 14px;cursor:pointer;transition:all .15s}
+.btn-prev:hover{border-color:rgba(14,15,12,.3);color:var(--ink)}
+
+/* ── SETTINGS ── */
+.set-card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:440px;margin-bottom:14px}
+.set-card h3{font-size:14px;font-weight:600;margin-bottom:16px}
+.set-row{margin-bottom:14px}
+.set-lbl{display:block;font-size:11px;font-weight:500;color:var(--muted2);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.set-inp{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:var(--paper-soft);color:var(--ink);outline:none;transition:border-color .15s}
+.set-inp:focus{border-color:var(--accent)}
+.set-note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.5;padding:10px 12px;background:var(--paper-soft);border-radius:6px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--ink);color:#fff;font-size:13px;font-weight:500;padding:11px 18px;border-radius:9px;opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:8px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast svg{width:14px;height:14px;flex-shrink:0}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(14,15,12,.45);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s;backdrop-filter:blur(2px)}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--paper);border-radius:14px;padding:28px;width:320px;box-shadow:0 24px 64px rgba(0,0,0,.15)}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.modal p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:24px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.m-cancel{padding:8px 16px;border-radius:7px;border:1px solid var(--line);background:transparent;font-family:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+.m-confirm{padding:8px 16px;border-radius:7px;border:none;background:#e53935;color:#fff;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lc">
+    <div class="lc-logo"><div class="lc-sq"></div>MONTAS</div>
+    <h2>Вход в админку</h2>
+    <p class="lc-sub">Управление статьями блога</p>
+    <label class="lc-lbl" for="lc-pass">Пароль</label>
+    <input class="lc-inp" id="lc-pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    <div class="lc-err" id="lc-err"></div>
+    <button class="lc-btn" onclick="doLogin()">Войти</button>
+    <p class="lc-hint">По умолчанию: montas2026</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <!-- Sidebar -->
+  <aside class="sb">
+    <div class="sb-logo"><div class="sb-sq"></div>MONTAS <span class="sb-badge">CMS</span></div>
+    <div class="sb-nav">
+      <div class="sb-section">Контент</div>
+      <button class="sb-link active" data-view="articles" onclick="showView('articles')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Статьи
+        <span class="sb-count" id="sb-count">0</span>
+      </button>
+      <button class="sb-link" data-view="editor" onclick="newArticle()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Новая статья
+      </button>
+      <div class="sb-section" style="margin-top:12px">Прочее</div>
+      <button class="sb-link" data-view="settings" onclick="showView('settings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Настройки
+      </button>
+    </div>
+    <div class="sb-footer">
+      <a href="/" target="_blank" class="sb-small">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Открыть сайт
+      </a>
+      <button class="sb-small" onclick="doLogout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Выйти
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="mh">
+      <span class="mh-title" id="mh-title">Статьи</span>
+      <div class="mh-actions" id="mh-actions">
+        <button class="btn-primary" onclick="newArticle()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Новая статья
+        </button>
+      </div>
+    </header>
+
+    <!-- Articles view -->
+    <div class="mb">
+      <div class="view active" id="view-articles">
+        <div class="stats-row" id="stats-row"></div>
+        <div class="list-bar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-inp" placeholder="Поиск по статьям..." oninput="renderList()">
+          </div>
+        </div>
+        <div id="articles-list"></div>
+      </div>
+
+      <!-- Settings view -->
+      <div class="view" id="view-settings">
+        <div class="set-card">
+          <h3>Безопасность</h3>
+          <div class="set-row">
+            <label class="set-lbl">Новый пароль</label>
+            <input class="set-inp" id="new-pass" type="password" placeholder="Минимум 6 символов">
+          </div>
+          <div class="set-row">
+            <label class="set-lbl">Повторите пароль</label>
+            <input class="set-inp" id="new-pass2" type="password" placeholder="Повторите пароль">
+          </div>
+          <button class="btn-primary" onclick="changePass()" style="margin-top:4px">Сохранить пароль</button>
+        </div>
+        <div class="set-card">
+          <h3>Данные</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Статьи хранятся в localStorage браузера. Экспортируйте данные чтобы сделать резервную копию.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-secondary" onclick="exportData()">Экспортировать JSON</button>
+            <button class="btn-secondary" onclick="document.getElementById('import-file').click()">Импортировать JSON</button>
+          </div>
+          <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+        </div>
+        <div class="set-card">
+          <h3>Опасная зона</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Удалить все статьи из базы. Действие необратимо.</p>
+          <button style="padding:8px 16px;border-radius:7px;border:1px solid #e53935;background:transparent;color:#e53935;font-family:inherit;font-size:13px;cursor:pointer" onclick="confirmClear()">Очистить все статьи</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editor (full-height, outside .mb scroll) -->
+    <div class="view-full" id="view-editor">
+      <div class="editor-shell">
+        <!-- Left: content -->
+        <div class="editor-left">
+          <textarea class="e-title" id="e-title" rows="1" placeholder="Заголовок статьи" oninput="autoHeight(this);autoSlug()" spellcheck="true"></textarea>
+          <div class="e-slug-row">
+            <span class="e-slug-pre">montas.agency/blog/</span>
+            <input class="e-slug" id="e-slug" type="text" placeholder="slug-url" spellcheck="false">
+          </div>
+          <div class="toolbar">
+            <button class="tb-btn" title="Жирный" onclick="fmt('bold')"><b>B</b></button>
+            <button class="tb-btn" title="Курсив" onclick="fmt('italic')"><i>I</i></button>
+            <div class="tb-sep"></div>
+            <button class="tb-btn" title="Заголовок H2" onclick="fmt('h2')">H2</button>
+            <button class="tb-btn" title="Заголовок H3" onclick="fmt('h3')">H3</button>
+            <div class="tb-sep"></div>
+            <button class="tb-btn" title="Цитата" onclick="fmt('quote')">"</button>
+            <button class="tb-btn" title="Маркированный список" onclick="fmt('ul')">•—</button>
+            <button class="tb-btn" title="Нумерованный список" onclick="fmt('ol')">1.</button>
+            <div class="tb-sep"></div>
+            <button class="tb-btn" title="Ссылка" onclick="fmt('link')">🔗</button>
+            <button class="tb-btn" title="Убрать форматирование" onclick="fmt('clear')" style="margin-left:auto">✕</button>
+          </div>
+          <div class="editor-area" id="e-content" contenteditable="true" data-placeholder="Начните писать статью..." spellcheck="true"></div>
+        </div>
+        <!-- Right: metadata -->
+        <div class="editor-right">
+          <div class="er-sec">
+            <span class="er-lbl">Статус</span>
+            <div class="status-row">
+              <button class="st-btn" id="st-draft" onclick="setStatus('draft')">Черновик</button>
+              <button class="st-btn" id="st-pub" onclick="setStatus('published')">Опубликовать</button>
+            </div>
+          </div>
+          <div class="er-sec">
+            <label class="er-lbl" for="e-category">Категория</label>
+            <select class="er-sel" id="e-category">
+              <option>Маркетинг</option>
+              <option>Дизайн</option>
+              <option>Разработка</option>
+              <option>Аналитика</option>
+              <option>AI</option>
+              <option>Бизнес</option>
+            </select>
+          </div>
+          <div class="er-sec">
+            <span class="er-lbl">Теги</span>
+            <div class="tags-input-row">
+              <input class="tags-inp" id="tags-inp" type="text" placeholder="Добавить тег" onkeydown="if(event.key==='Enter'){addTag();event.preventDefault()}">
+              <button class="tags-add" onclick="addTag()">+</button>
+            </div>
+            <div class="tags-wrap" id="tags-wrap"></div>
+          </div>
+          <div class="er-sec">
+            <label class="er-lbl" for="e-excerpt">Описание</label>
+            <textarea class="er-ta" id="e-excerpt" placeholder="Краткое описание для превью и SEO" rows="3"></textarea>
+          </div>
+          <div class="er-sec">
+            <label class="er-lbl" for="e-cover">Обложка (URL)</label>
+            <input class="er-inp" id="e-cover" type="url" placeholder="https://images.unsplash.com/..." oninput="updateCoverPreview()">
+            <img class="cover-preview" id="cover-preview" src="" alt="" onerror="this.style.display='none'" onload="this.style.display='block'">
+          </div>
+          <div class="er-sec">
+            <label class="er-lbl" for="e-author">Автор</label>
+            <input class="er-inp" id="e-author" type="text" placeholder="Имя автора">
+          </div>
+          <div class="er-sec">
+            <label class="er-lbl" for="e-date">Дата публикации</label>
+            <input class="er-inp" id="e-date" type="date">
+          </div>
+        </div>
+      </div>
+      <!-- Save bar -->
+      <div class="save-bar">
+        <span class="save-info" id="save-info">Несохранённые изменения</span>
+        <div class="save-actions">
+          <button class="btn-prev" id="btn-prev" onclick="previewCurrent()">Просмотр</button>
+          <button class="btn-del" id="btn-del" onclick="confirmDelete(null)" style="display:none">Удалить</button>
+          <button class="btn-save" onclick="saveArticle()">Сохранить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="overlay" id="del-overlay">
+  <div class="modal">
+    <h3>Удалить статью?</h3>
+    <p>Это действие необратимо. Статья будет удалена из базы.</p>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModal()">Отмена</button>
+      <button class="m-confirm" onclick="doDelete()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Clear modal -->
+<div class="overlay" id="clear-overlay">
+  <div class="modal">
+    <h3>Удалить все статьи?</h3>
+    <p>Все статьи будут удалены. Это действие необратимо и не поддаётся отмене.</p>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="document.getElementById('clear-overlay').classList.remove('show')">Отмена</button>
+      <button class="m-confirm" onclick="doClear()">Удалить всё</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Сохранено</span>
+</div>
+
+<script>
+const DB_KEY = 'montas_articles';
+const AUTH_KEY = 'montas_admin_auth';
+const PASS_KEY = 'montas_admin_pass';
+
+// ── DEFAULTS ──
+const DEFAULT_ARTICLES = [
+  {
+    id:'art-001',title:'Как выбрать каналы продвижения для B2B',slug:'kak-vybrat-kanaly',
+    status:'published',category:'Маркетинг',tags:['B2B','Стратегия','Каналы'],
+    excerpt:'Разбираем 7 ключевых каналов продвижения для B2B-бизнеса и объясняем, как выбрать подходящий под вашу модель продаж',
+    cover:'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80',
+    author:'Анастасия Волкова',date:'2026-05-28',
+    content:'<h2>Почему канал важнее бюджета</h2><p>Многие компании тратят деньги на рекламу, не задавая простой вопрос: где именно находится наша аудитория? Правильный выбор канала важнее самого бюджета — небольшой бюджет на правильном канале работает лучше большого на неподходящем.</p><h2>7 каналов для B2B</h2><p>SEO и контент-маркетинг, LinkedIn и профессиональные сети, email-рассылки по базе, контекстная реклама по коммерческим запросам, партнёрские интеграции, отраслевые мероприятия и вебинары, PR и работа с медиа.</p><h2>Как выбрать свой</h2><p>Начните с анализа: где ваши клиенты ищут решения? Какой цикл сделки? Какой средний чек? Чем длиннее цикл и выше чек — тем важнее контент и личные касания. Чем короче — тем эффективнее прямая реклама.</p>',
+    createdAt:1748390400000,updatedAt:1748390400000
+  },
+  {
+    id:'art-002',title:'Как мы измеряем эффективность UX-решений',slug:'kak-izmeryat-ux',
+    status:'draft',category:'Дизайн',tags:['UX','Аналитика','Метрики'],
+    excerpt:'Рассказываем, какие метрики использует команда MONTAS для оценки UX-решений до и после редизайна',
+    cover:'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
+    author:'Дмитрий Соколов',date:'2026-06-14',
+    content:'<h2>Проблема с субъективными оценками</h2><p>«Мне нравится» — это не метрика. Дизайн, который нравится команде, может не конвертировать. Поэтому мы строим процесс оценки вокруг данных, а не вкусовщины.</p><h2>Ключевые метрики</h2><p>Конверсия по воронке, время до ключевого действия, показатель отказов, глубина скролла, тепловые карты кликов и NPS после onboarding.</p>',
+    createdAt:1749859200000,updatedAt:1749859200000
+  }
+];
+
+// ── STATE ──
+let articles = [];
+let editingId = null;
+let deleteTargetId = null;
+let currentStatus = 'draft';
+let currentTags = [];
+let saveTimeout;
+
+// ── AUTH ──
+function getPass(){return localStorage.getItem(PASS_KEY)||'montas2026'}
+function isAuth(){return sessionStorage.getItem(AUTH_KEY)==='1'}
+
+function doLogin(){
+  const val = document.getElementById('lc-pass').value;
+  const err = document.getElementById('lc-err');
+  if(!val){err.textContent='Введите пароль';return}
+  if(val===getPass()){
+    sessionStorage.setItem(AUTH_KEY,'1');
+    document.getElementById('login').style.display='none';
+    document.getElementById('app').classList.add('visible');
+    initApp();
+  } else {
+    err.textContent='Неверный пароль';
+    document.getElementById('lc-pass').focus();
+  }
+}
+
+function doLogout(){
+  sessionStorage.removeItem(AUTH_KEY);
+  location.reload();
+}
+
+document.getElementById('lc-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+
+// ── STORAGE ──
+function loadArticles(){
+  try{
+    const raw=localStorage.getItem(DB_KEY);
+    if(raw){const p=JSON.parse(raw);if(Array.isArray(p)&&p.length)return p;}
+  }catch(e){}
+  const d=[...DEFAULT_ARTICLES];
+  localStorage.setItem(DB_KEY,JSON.stringify(d));
+  return d;
+}
+function persist(){localStorage.setItem(DB_KEY,JSON.stringify(articles))}
+
+// ── INIT ──
+function initApp(){
+  articles=loadArticles();
+  updateSbCount();
+  renderStats();
+  renderList();
+  showView('articles');
+}
+
+function updateSbCount(){
+  document.getElementById('sb-count').textContent=articles.length;
+}
+
+// ── VIEWS ──
+function showView(name){
+  // deactivate all
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.view-full').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.sb-link').forEach(l=>l.classList.remove('active'));
+
+  const titles={articles:'Статьи',editor:editingId?'Редактировать статью':'Новая статья',settings:'Настройки'};
+  document.getElementById('mh-title').textContent=titles[name]||'';
+
+  const acts=document.getElementById('mh-actions');
+  acts.innerHTML='';
+
+  if(name==='articles'){
+    document.getElementById('view-articles').classList.add('active');
+    acts.innerHTML='<button class="btn-primary" onclick="newArticle()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая статья</button>';
+  } else if(name==='editor'){
+    document.getElementById('view-editor').classList.add('active');
+    acts.innerHTML='<button class="btn-secondary" onclick="showView(\'articles\')">← К списку</button>';
+  } else if(name==='settings'){
+    document.getElementById('view-settings').classList.add('active');
+  }
+
+  // sidebar highlight
+  const link=document.querySelector(`.sb-link[data-view="${name}"]`);
+  if(link)link.classList.add('active');
+}
+
+// ── STATS ──
+function renderStats(){
+  const pub=articles.filter(a=>a.status==='published').length;
+  const draft=articles.filter(a=>a.status==='draft').length;
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat-card"><div class="stat-n">${articles.length}</div><div class="stat-l">Всего статей</div></div>
+    <div class="stat-card"><div class="stat-n" style="color:#059669">${pub}</div><div class="stat-l">Опубликовано</div></div>
+    <div class="stat-card"><div class="stat-n" style="color:var(--muted2)">${draft}</div><div class="stat-l">Черновиков</div></div>
+  `;
+}
+
+// ── LIST ──
+function renderList(){
+  const q=(document.getElementById('search-inp').value||'').toLowerCase();
+  const filtered=articles
+    .filter(a=>!q||a.title.toLowerCase().includes(q)||a.excerpt.toLowerCase().includes(q))
+    .sort((a,b)=>b.updatedAt-a.updatedAt);
+
+  const el=document.getElementById('articles-list');
+  if(!filtered.length){
+    el.innerHTML=`<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <p>${q?'Ничего не найдено':'Статей пока нет. Создайте первую!'}</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML=filtered.map(a=>{
+    const cover=a.cover
+      ?`<img class="art-cover" src="${esc(a.cover)}" alt="" onerror="this.style.display='none'">`
+      :`<div class="art-cover-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-4 4 4"/></svg></div>`;
+    return `<div class="art-row" onclick="editArticle('${a.id}')">
+      ${cover}
+      <div class="art-info">
+        <div class="art-title">${esc(a.title||'Без названия')}</div>
+        <div class="art-meta">${esc(a.category||'')} · ${fmtDate(a.date)} · обновлено ${timeAgo(a.updatedAt)}</div>
+      </div>
+      <span class="badge ${a.status}">${a.status==='published'?'Опубликовано':'Черновик'}</span>
+      <div class="row-actions" onclick="event.stopPropagation()">
+        <button class="row-btn" onclick="previewArticle('${a.id}')">Просмотр</button>
+        <button class="row-btn del" onclick="confirmDelete('${a.id}')">Удалить</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EDITOR ──
+function newArticle(){
+  editingId=null;
+  currentTags=[];
+  currentStatus='draft';
+  document.getElementById('e-title').value='';
+  document.getElementById('e-slug').value='';
+  document.getElementById('e-author').value='';
+  document.getElementById('e-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('e-category').value='Маркетинг';
+  document.getElementById('e-excerpt').value='';
+  document.getElementById('e-cover').value='';
+  const cp=document.getElementById('cover-preview');cp.src='';cp.style.display='none';
+  document.getElementById('e-content').innerHTML='';
+  document.getElementById('btn-del').style.display='none';
+  setStatus('draft');
+  renderTags();
+  setSaveInfo('Новая статья');
+  showView('editor');
+  setTimeout(()=>document.getElementById('e-title').focus(),50);
+}
+
+function editArticle(id){
+  const a=articles.find(x=>x.id===id);
+  if(!a)return;
+  editingId=id;
+  currentTags=[...(a.tags||[])];
+  document.getElementById('e-title').value=a.title||'';
+  autoHeight(document.getElementById('e-title'));
+  document.getElementById('e-slug').value=a.slug||'';
+  document.getElementById('e-author').value=a.author||'';
+  document.getElementById('e-date').value=a.date||'';
+  document.getElementById('e-category').value=a.category||'Маркетинг';
+  document.getElementById('e-excerpt').value=a.excerpt||'';
+  document.getElementById('e-cover').value=a.cover||'';
+  const cp=document.getElementById('cover-preview');
+  if(a.cover){cp.src=a.cover;cp.style.display='block';}else{cp.src='';cp.style.display='none';}
+  document.getElementById('e-content').innerHTML=a.content||'';
+  document.getElementById('btn-del').style.display='';
+  setStatus(a.status||'draft');
+  renderTags();
+  setSaveInfo('Последнее изменение: '+fmtDate(new Date(a.updatedAt).toISOString().slice(0,10)));
+  showView('editor');
+}
+
+function setStatus(s){
+  currentStatus=s;
+  const d=document.getElementById('st-draft');
+  const p=document.getElementById('st-pub');
+  d.className='st-btn'+(s==='draft'?' on-draft':'');
+  p.className='st-btn'+(s==='published'?' on-pub':'');
+}
+
+function saveArticle(){
+  const title=document.getElementById('e-title').value.trim();
+  if(!title){toast('Введите заголовок');return;}
+  const slug=document.getElementById('e-slug').value.trim()||toSlug(title);
+  const now=Date.now();
+  const existing=editingId?articles.find(a=>a.id===editingId):null;
+  const art={
+    id:editingId||'art-'+Math.random().toString(36).slice(2,9),
+    title,slug,status:currentStatus,
+    category:document.getElementById('e-category').value,
+    tags:[...currentTags],
+    excerpt:document.getElementById('e-excerpt').value.trim(),
+    cover:document.getElementById('e-cover').value.trim(),
+    author:document.getElementById('e-author').value.trim(),
+    date:document.getElementById('e-date').value,
+    content:document.getElementById('e-content').innerHTML,
+    createdAt:existing?existing.createdAt:now,
+    updatedAt:now,
+  };
+  if(editingId){
+    const idx=articles.findIndex(a=>a.id===editingId);
+    articles[idx]=art;
+  } else {
+    editingId=art.id;
+    articles.unshift(art);
+    document.getElementById('btn-del').style.display='';
+  }
+  persist();
+  updateSbCount();
+  renderStats();
+  setSaveInfo('Сохранено: '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}));
+  toast(art.status==='published'?'Опубликовано':'Черновик сохранён');
+}
+
+function setSaveInfo(t){document.getElementById('save-info').textContent=t}
+
+// ── FORMATTING ──
+function fmt(cmd){
+  document.getElementById('e-content').focus();
+  if(cmd==='bold')document.execCommand('bold');
+  else if(cmd==='italic')document.execCommand('italic');
+  else if(cmd==='h2')document.execCommand('formatBlock',false,'h2');
+  else if(cmd==='h3')document.execCommand('formatBlock',false,'h3');
+  else if(cmd==='quote')document.execCommand('formatBlock',false,'blockquote');
+  else if(cmd==='ul')document.execCommand('insertUnorderedList');
+  else if(cmd==='ol')document.execCommand('insertOrderedList');
+  else if(cmd==='clear')document.execCommand('removeFormat');
+  else if(cmd==='link'){
+    const url=prompt('Ссылка:');
+    if(url)document.execCommand('createLink',false,url);
+  }
+}
+
+// ── TAGS ──
+function renderTags(){
+  const wrap=document.getElementById('tags-wrap');
+  wrap.innerHTML=currentTags.map((t,i)=>`
+    <span class="tag-chip">${esc(t)}<button onclick="removeTag(${i})" title="Удалить">×</button></span>
+  `).join('');
+}
+function addTag(){
+  const inp=document.getElementById('tags-inp');
+  const val=inp.value.trim();
+  if(val&&!currentTags.includes(val)){currentTags.push(val);renderTags();}
+  inp.value='';
+}
+function removeTag(i){currentTags.splice(i,1);renderTags();}
+
+// ── SLUG AUTO ──
+function autoSlug(){
+  if(!editingId){
+    const t=document.getElementById('e-title').value;
+    document.getElementById('e-slug').value=toSlug(t);
+  }
+}
+function toSlug(s){
+  const m={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'e',ж:'zh',з:'z',и:'i',й:'j',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'h',ц:'ts',ч:'ch',ш:'sh',щ:'sch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya'};
+  return (s||'').toLowerCase().split('').map(c=>m[c]!==undefined?m[c]:c).join('').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60);
+}
+
+// ── COVER ──
+function updateCoverPreview(){
+  const url=document.getElementById('e-cover').value.trim();
+  const cp=document.getElementById('cover-preview');
+  if(url){cp.src=url;cp.style.display='block';}else{cp.src='';cp.style.display='none';}
+}
+
+// ── PREVIEW ──
+function previewArticle(id){
+  window.open('../blog/viewer.html?id='+id,`_blank`);
+}
+function previewCurrent(){
+  if(editingId)previewArticle(editingId);
+  else{saveArticle();setTimeout(()=>{if(editingId)previewArticle(editingId);},100);}
+}
+
+// ── DELETE ──
+function confirmDelete(id){
+  deleteTargetId=id||editingId;
+  document.getElementById('del-overlay').classList.add('show');
+}
+function closeModal(){
+  deleteTargetId=null;
+  document.getElementById('del-overlay').classList.remove('show');
+}
+function doDelete(){
+  if(!deleteTargetId)return;
+  articles=articles.filter(a=>a.id!==deleteTargetId);
+  persist();updateSbCount();renderStats();renderList();
+  closeModal();
+  if(deleteTargetId===editingId){editingId=null;showView('articles');}
+  deleteTargetId=null;
+  toast('Статья удалена');
+}
+
+// ── CLEAR ──
+function confirmClear(){document.getElementById('clear-overlay').classList.add('show')}
+function doClear(){
+  articles=[];persist();updateSbCount();renderStats();renderList();
+  document.getElementById('clear-overlay').classList.remove('show');
+  toast('Все статьи удалены');
+}
+
+// ── SETTINGS ──
+function changePass(){
+  const p1=document.getElementById('new-pass').value;
+  const p2=document.getElementById('new-pass2').value;
+  if(p1.length<6){toast('Пароль должен быть минимум 6 символов');return;}
+  if(p1!==p2){toast('Пароли не совпадают');return;}
+  localStorage.setItem(PASS_KEY,p1);
+  document.getElementById('new-pass').value='';
+  document.getElementById('new-pass2').value='';
+  toast('Пароль изменён');
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(articles,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='montas-articles-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data))throw new Error();
+      articles=data;persist();updateSbCount();renderStats();renderList();
+      toast('Импортировано: '+data.length+' статей');
+    }catch{toast('Ошибка: неверный формат JSON');}
+  };
+  r.readAsText(file);
+  e.target.value='';
+}
+
+// ── UTILS ──
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML}
+function autoHeight(el){el.style.height='auto';el.style.height=el.scrollHeight+'px'}
+function fmtDate(d){
+  if(!d)return '';
+  try{const dt=new Date(d+'T00:00:00');const m=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];return dt.getDate()+' '+m[dt.getMonth()]+' '+dt.getFullYear();}
+  catch{return d}
+}
+function timeAgo(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return 'только что';
+  if(s<3600)return Math.floor(s/60)+' мин назад';
+  if(s<86400)return Math.floor(s/3600)+' ч назад';
+  return Math.floor(s/86400)+' дн назад';
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── BOOT ──
+if(isAuth()){
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  initApp();
+}
+
+// close modals on overlay click
+document.getElementById('del-overlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
+document.getElementById('clear-overlay').addEventListener('click',function(e){if(e.target===this)this.classList.remove('show')});
+// Ctrl+S to save
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'&&document.getElementById('view-editor').classList.contains('active')){e.preventDefault();saveArticle();}});
+</script>
+</body>
+</html>
