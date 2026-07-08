@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Блог — MONTAS</title>
+<meta name="description" content="Статьи о маркетинге, дизайне, разработке и росте бизнеса от команды MONTAS">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e0f0c;--paper:#fafafa;--paper-soft:#f1f0ec;
+  --line:rgba(14,15,12,.12);--line-soft:rgba(14,15,12,.06);
+  --accent:#1a5cff;--accent-soft:rgba(26,92,255,.08);--accent-hover:#1448d6;
+  --muted:rgba(14,15,12,.55);--muted2:rgba(14,15,12,.40);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Google Sans','Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;border:none;background:none;cursor:pointer}
+img{display:block;max-width:100%}
+
+/* NAV */
+.nav{position:fixed;left:0;right:0;top:0;z-index:100;background:var(--paper);border-bottom:1px solid var(--line);transition:box-shadow .2s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,64px);height:72px;gap:32px}
+.nav-logo{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.nav-sq{width:9px;height:9px;background:var(--accent);flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-family:'SF Mono',ui-monospace,monospace;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);transition:color .15s}
+.nav-links a:hover,.nav-links a.active{color:var(--ink)}
+.nav-cta{display:inline-flex;align-items:center;background:var(--accent);color:#fff;font-size:13px;font-weight:500;padding:9px 20px;border-radius:6px;transition:background .15s}
+.nav-cta:hover{background:var(--accent-hover)}
+.burger{display:none;flex-direction:column;gap:5px;width:40px;height:40px;padding:10px 8px;border-radius:6px;transition:background .15s}
+.burger span{display:block;width:100%;height:1.5px;background:var(--ink);transition:transform .25s,opacity .25s}
+.burger:hover{background:rgba(14,15,12,.06)}
+.burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mob-menu{display:none;position:fixed;inset:0;z-index:99;background:var(--paper);padding:90px clamp(20px,3vw,40px) 40px;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.mob-menu.open{transform:translateX(0)}
+.mob-menu a{font-size:22px;font-weight:600;letter-spacing:-.02em;padding:14px 0;border-bottom:1px solid var(--line);color:var(--ink);transition:color .15s}
+.mob-menu a:hover{color:var(--accent)}
+.mob-menu .mob-btn{margin-top:20px;display:flex;justify-content:center;background:var(--accent);color:#fff;font-size:15px;font-weight:500;padding:16px 28px;border-radius:6px}
+
+/* PAGE */
+.page-wrap{padding-top:72px;min-height:100vh}
+
+/* HERO */
+.blog-hero{
+  background:var(--paper-soft);
+  padding:clamp(48px,6vw,80px) clamp(20px,4vw,64px) clamp(40px,5vw,64px);
+  border-bottom:1px solid var(--line);
+}
+.blog-hero-inner{max-width:1280px;margin:0 auto}
+.blog-hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:'SF Mono',ui-monospace,monospace;
+  font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:18px;
+}
+.blog-hero h1{font-size:clamp(32px,5vw,60px);font-weight:700;letter-spacing:-.03em;line-height:1.05;margin-bottom:14px}
+.blog-hero-sub{font-size:clamp(14px,1.3vw,17px);color:var(--muted);line-height:1.65;max-width:520px}
+
+/* FILTER */
+.blog-filter{
+  padding:clamp(20px,2.5vw,32px) clamp(20px,4vw,64px);
+  border-bottom:1px solid var(--line);
+  background:var(--paper);
+  position:sticky;top:72px;z-index:50;
+}
+.blog-filter-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.filter-tab{
+  font-family:'SF Mono',ui-monospace,monospace;
+  font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  padding:7px 16px;border-radius:999px;border:1px solid var(--line);
+  color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s,background .15s;
+  background:transparent;
+}
+.filter-tab:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.filter-tab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+/* GRID */
+.blog-main{padding:clamp(40px,5vw,64px) clamp(20px,4vw,64px) clamp(60px,8vw,100px)}
+.blog-main-inner{max-width:1280px;margin:0 auto}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,24px)}
+.blog-card{
+  display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  background:var(--paper);transition:border-color .2s,box-shadow .2s;
+  cursor:pointer;
+}
+.blog-card:hover{border-color:rgba(26,92,255,.35);box-shadow:0 4px 24px rgba(26,92,255,.08)}
+.blog-card-img{aspect-ratio:16/9;background:var(--paper-soft);overflow:hidden;position:relative;flex-shrink:0}
+.blog-card-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.blog-card:hover .blog-card-img img{transform:scale(1.04)}
+.blog-card-img-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--paper-soft);color:var(--muted2)}
+.blog-card-body{padding:clamp(16px,2vw,22px);display:flex;flex-direction:column;flex:1}
+.blog-card-tag{display:inline-block;font-family:ui-monospace,monospace;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.blog-card-title{font-size:clamp(14px,1.3vw,16px);font-weight:600;color:var(--ink);line-height:1.4;margin-bottom:8px}
+.blog-card-desc{font-size:13px;line-height:1.6;color:var(--muted);flex:1}
+.blog-card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.blog-card-date{font-size:11px;color:var(--muted2)}
+.blog-card-link{font-size:12px;font-weight:500;color:var(--accent);display:flex;align-items:center;gap:4px;transition:gap .15s}
+.blog-card:hover .blog-card-link{gap:7px}
+.blog-card-link svg{width:12px;height:12px}
+
+/* COUNT */
+.blog-count{font-size:13px;color:var(--muted);margin-bottom:clamp(24px,3vw,36px)}
+.blog-count strong{color:var(--ink);font-weight:600}
+
+/* EMPTY */
+.blog-empty{
+  grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(60px,8vw,100px) 24px;text-align:center;
+}
+.blog-empty-icon{width:56px;height:56px;border-radius:12px;background:var(--paper-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:var(--muted2)}
+.blog-empty h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.blog-empty p{font-size:14px;color:var(--muted);max-width:340px}
+
+/* FOOTER */
+.footer-inner{max-width:1280px;margin:0 auto;padding:clamp(40px,5vw,64px) clamp(20px,3vw,40px) clamp(20px,3vw,32px)}
+.footer-grid{display:grid;grid-template-columns:1.2fr 1fr auto;gap:clamp(24px,4vw,48px);margin-bottom:clamp(32px,4vw,48px);align-items:start}
+.footer-logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:14px}
+.footer-desc{font-size:13px;line-height:1.6;color:var(--muted);max-width:280px}
+.footer-contacts{display:flex;flex-direction:column;gap:10px}
+.footer-contact{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);transition:color .15s}
+.footer-contact:hover{color:var(--ink)}
+.footer-contact svg{width:13px;height:13px;color:var(--accent);flex-shrink:0}
+.footer-socials{display:flex;flex-direction:column;gap:10px}
+.footer-social{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);transition:color .15s}
+.footer-social:hover{color:var(--ink)}
+.footer-social svg{width:13px;height:13px;color:var(--accent)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:20px;border-top:1px solid var(--line);gap:16px;flex-wrap:wrap}
+.footer-copy{font-size:11px;color:var(--muted2)}
+.footer-priv{font-size:11px;color:var(--muted2);transition:color .15s}
+.footer-priv:hover{color:var(--ink)}
+
+@media(max-width:1000px){.blog-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){
+  .nav-links,.nav-cta{display:none}
+  .burger{display:flex}
+  .mob-menu{display:flex}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:580px){.blog-grid{grid-template-columns:1fr}}
+@media(max-width:500px){.footer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo"><div class="nav-sq"></div>MONTAS</a>
+    <nav class="nav-links">
+      <a href="/#services">Услуги</a>
+      <a href="/#cases">Кейсы</a>
+      <a href="/#about">О нас</a>
+      <a href="/blog/" class="active">Блог</a>
+      <a href="/#contact">Контакты</a>
+    </nav>
+    <a href="/#contact" class="nav-cta">Оставить заявку</a>
+    <button class="burger" id="burger" aria-label="Меню"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mob-menu" id="mob-menu">
+  <a href="/#services" class="m-link">Услуги</a>
+  <a href="/#cases" class="m-link">Кейсы</a>
+  <a href="/#about" class="m-link">О нас</a>
+  <a href="/blog/" class="m-link">Блог</a>
+  <a href="/#contact" class="m-link">Контакты</a>
+  <a href="/#contact" class="mob-btn m-link">Оставить заявку</a>
+</div>
+
+<div class="page-wrap">
+
+  <div class="blog-hero">
+    <div class="blog-hero-inner">
+      <div class="blog-hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Блог
+      </div>
+      <h1>Статьи о маркетинге,<br>дизайне и росте бизнеса</h1>
+      <p class="blog-hero-sub">Делимся опытом, разбираем кейсы и рассказываем о том, что работает для малого и среднего бизнеса</p>
+    </div>
+  </div>
+
+  <div class="blog-filter" id="blog-filter">
+    <div class="blog-filter-inner" id="filter-tabs">
+      <button class="filter-tab active" data-cat="">Все статьи</button>
+    </div>
+  </div>
+
+  <div class="blog-main">
+    <div class="blog-main-inner">
+      <p class="blog-count" id="blog-count"></p>
+      <div class="blog-grid" id="blog-grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer style="background:var(--paper);border-top:1px solid var(--line)">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo"><div class="nav-sq"></div>MONTAS</div>
+        <p class="footer-desc">Маркетинговое агентство полного цикла для малого и среднего бизнеса, застройщиков и логистики</p>
+      </div>
+      <div class="footer-contacts">
+        <a href="tel:+79991234567" class="footer-contact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.89 9.11 19.79 19.79 0 01.82.47 2 2 0 012.81 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l.91-.91a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          +7 (999) 123-45-67
+        </a>
+        <a href="https://t.me/" class="footer-contact">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.93 7.13l-1.68 7.93c-.12.56-.46.7-.93.43l-2.58-1.9-1.24 1.2c-.14.14-.26.26-.52.26l.18-2.63 4.75-4.29c.21-.18-.04-.28-.32-.1L7.92 14.84l-2.52-.79c-.55-.17-.56-.55.12-.82l9.84-3.79c.45-.17.85.1.57.89z"/></svg>
+          @montas
+        </a>
+        <a href="mailto:hello@montas.agency" class="footer-contact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          hello@montas.agency
+        </a>
+        <span class="footer-contact" style="pointer-events:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Москва, Пресненская наб., 12
+        </span>
+      </div>
+      <div class="footer-socials">
+        <a href="#" class="footer-social">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14C20.67 22 22 20.67 22 15.07V8.93C22 3.33 20.67 2 15.07 2zm3.08 13.5h-1.66c-.63 0-.82-.5-1.94-1.63-1-.95-1.44-.95-1.69-.95-.34 0-.44.1-.44.57v1.49c0 .4-.13.64-1.17.64-1.72 0-3.63-1.04-4.97-3.01C4.72 9.99 4.34 8.25 4.34 7.88c0-.25.1-.48.57-.48h1.66c.43 0 .59.19.75.64.83 2.38 2.21 4.47 2.78 4.47.21 0 .31-.1.31-.64V9.65c-.07-1.14-.67-1.24-.67-1.65 0-.21.17-.43.44-.43h2.61c.37 0 .5.19.5.61v3.27c0 .37.17.5.27.5.21 0 .38-.13.76-.51 1.18-1.32 2.02-3.35 2.02-3.35.11-.25.31-.48.74-.48h1.66c.5 0 .61.25.5.61-.21.96-2.23 3.82-2.23 3.82-.17.28-.23.4 0 .71.17.23.72.7 1.09 1.12.68.76 1.19 1.4 1.33 1.84.15.44-.08.66-.53.66z"/></svg>
+          VK
+        </a>
+        <a href="#" class="footer-social">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2026 Montas. Все права защищены.</p>
+      <a href="#" class="footer-priv">Политика конфиденциальности</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const DB_KEY='montas_articles';
+
+function getArticles(){
+  try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):[];}catch{return [];}
+}
+
+function fmtDate(d){
+  if(!d)return '';
+  try{
+    const dt=new Date(d+'T00:00:00');
+    const m=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    return dt.getDate()+' '+m[dt.getMonth()]+' '+dt.getFullYear();
+  }catch{return d;}
+}
+
+function esc(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function cardHtml(art){
+  const url='/blog/viewer.html?id='+encodeURIComponent(art.id);
+  const img=art.cover&&art.cover.startsWith('http')
+    ?`<img src="${art.cover}" alt="${esc(art.title)}" loading="lazy">`
+    :`<div class="blog-card-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-6 6 6"/><circle cx="8" cy="14" r="1.5"/></svg></div>`;
+  return `<a href="${url}" class="blog-card">
+    <div class="blog-card-img">${img}</div>
+    <div class="blog-card-body">
+      <span class="blog-card-tag">${esc(art.category||'Статья')}</span>
+      <div class="blog-card-title">${esc(art.title)}</div>
+      <div class="blog-card-desc">${esc(art.excerpt||'')}</div>
+      <div class="blog-card-foot">
+        <span class="blog-card-date">${fmtDate(art.date)}</span>
+        <span class="blog-card-link">Читать <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+    </div>
+  </a>`;
+}
+
+function emptyHtml(){
+  return `<div class="blog-empty">
+    <div class="blog-empty-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    </div>
+    <h3>Статей пока нет</h3>
+    <p>Опубликованные статьи появятся здесь автоматически</p>
+  </div>`;
+}
+
+let allArticles=[];
+let activeCat='';
+
+function render(){
+  const grid=document.getElementById('blog-grid');
+  const countEl=document.getElementById('blog-count');
+  const filtered=activeCat?allArticles.filter(a=>a.category===activeCat):allArticles;
+  if(!filtered.length){
+    grid.innerHTML=emptyHtml();
+    countEl.textContent='';
+  } else {
+    grid.innerHTML=filtered.map(cardHtml).join('');
+    countEl.innerHTML=`<strong>${filtered.length}</strong> ${filtered.length===1?'статья':filtered.length<5?'статьи':'статей'}`;
+  }
+}
+
+function buildFilters(articles){
+  const cats=[...new Set(articles.map(a=>a.category).filter(Boolean))];
+  const tabs=document.getElementById('filter-tabs');
+  cats.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='filter-tab';
+    btn.dataset.cat=cat;
+    btn.textContent=cat;
+    tabs.appendChild(btn);
+  });
+  tabs.addEventListener('click',e=>{
+    const btn=e.target.closest('.filter-tab');
+    if(!btn)return;
+    tabs.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeCat=btn.dataset.cat;
+    render();
+  });
+}
+
+// Init
+allArticles=getArticles().filter(a=>a.status==='published');
+buildFilters(allArticles);
+render();
+
+// Nav scroll
+const navEl=document.getElementById('nav');
+window.addEventListener('scroll',()=>navEl.classList.toggle('scrolled',scrollY>20),{passive:true});
+
+// Burger
+const burger=document.getElementById('burger'),mob=document.getElementById('mob-menu');
+burger.addEventListener('click',()=>{
+  const o=burger.classList.toggle('open');
+  mob.classList.toggle('open',o);
+  document.body.style.overflow=o?'hidden':'';
+});
+mob.querySelectorAll('.m-link').forEach(a=>a.addEventListener('click',()=>{
+  burger.classList.remove('open');mob.classList.remove('open');document.body.style.overflow='';
+}));
+</script>
+</body>
+</html>

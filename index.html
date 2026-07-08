@@ -908,7 +908,7 @@ img{display:block;max-width:100%}
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
-    <div class="blog-grid">
+    <div class="blog-grid" id="blog-grid">
 
       <a href="/blog/kak-vybrat-kanaly.html" class="blog-card">
         <div class="blog-card-img">
@@ -1228,6 +1228,39 @@ document.getElementById('cta-form').addEventListener('submit',async e=>{
   document.getElementById('cta-form').style.display='none';
   document.getElementById('cta-success').style.display='block';
 });
+
+// Blog preview from CMS
+(function(){
+  const DB_KEY='montas_articles';
+  function getArticles(){try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):[];}catch{return [];}}
+  function fmtDate(d){
+    if(!d)return '';
+    try{const dt=new Date(d+'T00:00:00');const m=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];return dt.getDate()+' '+m[dt.getMonth()]+' '+dt.getFullYear();}catch{return d;}
+  }
+  function cardHtml(art){
+    const url='/blog/viewer.html?id='+encodeURIComponent(art.id);
+    const safeTitle=art.title.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const img=art.cover&&art.cover.startsWith('http')
+      ?`<img src="${art.cover}" alt="${safeTitle}" loading="lazy">`
+      :`<div class="blog-card-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-6 6 6"/><circle cx="8" cy="14" r="1.5"/></svg></div>`;
+    return `<a href="${url}" class="blog-card">
+      <div class="blog-card-img">${img}</div>
+      <div class="blog-card-body">
+        <span class="blog-card-tag">${art.category||'Статья'}</span>
+        <div class="blog-card-title">${safeTitle}</div>
+        <div class="blog-card-desc">${(art.excerpt||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="blog-card-foot">
+          <span class="blog-card-date">${fmtDate(art.date)}</span>
+          <span class="blog-card-link">Читать <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </div>
+    </a>`;
+  }
+  const grid=document.getElementById('blog-grid');
+  if(!grid)return;
+  const arts=getArticles().filter(a=>a.status==='published').slice(0,3);
+  if(arts.length)grid.innerHTML=arts.map(cardHtml).join('');
+})();
 
 // Team slider
 (function(){
