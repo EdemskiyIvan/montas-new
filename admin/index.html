@@ -799,7 +799,7 @@ function showView(name){
   acts.innerHTML='';
 
   const mb = document.querySelector('.mb');
-  mb.style.display = (name === 'editor') ? 'none' : '';
+  mb.style.display = (name === 'editor' || name === 'case-editor') ? 'none' : '';
 
   if(name==='articles'){
     document.getElementById('view-articles').classList.add('active');
