@@ -53,8 +53,13 @@ img{display:block;max-width:100%}
 .article-author-name{font-size:13px;font-weight:500;color:var(--ink)}
 .article-author-role{font-size:11px;color:var(--muted)}
 .article-meta-sep{width:1px;height:28px;background:var(--line)}
+.article-meta-dot{font-size:12px;color:var(--muted2);margin:0 -4px}
 .article-date{font-size:12px;color:var(--muted2)}
 .article-read{font-size:12px;color:var(--muted2)}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:transparent;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.share-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.share-btn.copied{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.share-btn svg{width:13px;height:13px;flex-shrink:0}
 
 /* COVER */
 .article-cover{width:100%;max-width:1280px;margin:0 auto;padding:0 clamp(20px,4vw,64px) clamp(32px,4vw,56px)}
@@ -296,9 +301,13 @@ function render(){
         <div class="article-meta">
           ${authorHtml}
           <div class="article-meta-sep"></div>
-          <span class="article-date">${fmtDate(art.date)}</span>
-          <div class="article-meta-sep"></div>
           <span class="article-read">${readingTime(art.content)}</span>
+          <span class="article-meta-dot">·</span>
+          <span class="article-date">${fmtDate(art.date)}</span>
+          <button class="share-btn" id="share-btn" onclick="copyLink(this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span id="share-label">Поделиться</span>
+          </button>
         </div>
       </div>
 
@@ -349,6 +358,15 @@ function render(){
 }
 
 render();
+
+function copyLink(btn){
+  navigator.clipboard.writeText(window.location.href).then(()=>{
+    const lbl=document.getElementById('share-label');
+    btn.classList.add('copied');
+    lbl.textContent='Ссылка скопирована';
+    setTimeout(()=>{btn.classList.remove('copied');lbl.textContent='Поделиться';},2200);
+  });
+}
 </script>
 </body>
 </html>
