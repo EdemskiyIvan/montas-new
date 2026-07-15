@@ -1002,7 +1002,8 @@ function editArticle(id){
   document.getElementById('btn-del').style.display='';
   setStatus(a.status||'draft');
   renderTags();
-  setSaveInfo('Последнее изменение: '+fmtDate(new Date(a.updatedAt).toISOString().slice(0,10)));
+  const upd=a.updatedAt||a.updated_at;
+  setSaveInfo(upd?'Последнее изменение: '+fmtDate(new Date(upd).toISOString().slice(0,10)):'');
   showView('editor');
   requestAnimationFrame(()=>{autoHeight(document.getElementById('e-title'));runSeoCheck();});
 }
