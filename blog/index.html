@@ -242,8 +242,6 @@ img{display:block;max-width:100%}
 
 <script src="../admin/config.js"></script>
 <script>
-const DB_KEY='montas_articles';
-
 const SOCIAL_ICONS={
   telegram:`<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>`,
   vk:`<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.587-1.496c.6-.19 1.37 1.26 2.185 1.815.617.416 1.086.325 1.086.325l2.182-.03s1.141-.071.6-.968c-.044-.073-.314-.661-1.618-1.869-1.365-1.263-1.183-1.058.462-3.243.999-1.333 1.398-2.147 1.273-2.494-.12-.332-.855-.244-.855-.244l-2.455.015s-.182-.025-.317.056c-.132.079-.217.264-.217.264s-.386 1.028-.901 1.902c-1.085 1.843-1.52 1.94-1.698 1.825-.413-.267-.31-1.075-.31-1.649 0-1.793.272-2.54-.528-2.735-.266-.064-.461-.107-1.141-.114-.872-.009-1.609.003-2.026.207-.278.136-.492.439-.361.456.161.022.526.098.72.362.25.341.241 1.107.241 1.107s.144 2.11-.335 2.372c-.329.179-.78-.186-1.748-1.854-.496-.858-.871-1.806-.871-1.806s-.072-.179-.202-.275c-.157-.116-.376-.153-.376-.153l-2.33.015s-.35.01-.479.163c-.113.136-.009.417-.009.417s1.826 4.271 3.892 6.423c1.895 1.973 4.047 1.843 4.047 1.843h.975z"/></svg>`,
@@ -268,8 +266,8 @@ function renderSocials(){
   document.querySelector('.blog-hero-filter').style.display=links.length?'':'none';
 }
 
-function getArticles(){
-  try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):[];}catch{return [];}
+async function getArticles(){
+  try{return await fetch('/api/posts').then(r=>r.json());}catch{return [];}
 }
 
 function fmtDate(d){
@@ -284,7 +282,7 @@ function fmtDate(d){
 function esc(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function cardHtml(art){
-  const url='/blog/viewer.html?id='+encodeURIComponent(art.id);
+  const url='/blog/viewer.html?slug='+encodeURIComponent(art.slug);
   const img=art.cover&&art.cover.length>4
     ?`<img src="${art.cover}" alt="${esc(art.title)}" loading="lazy">`
     :`<div class="blog-card-img-placeholder"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9l4-4 4 4 4-6 6 6"/><circle cx="8" cy="14" r="1.5"/></svg></div>`;
@@ -379,17 +377,12 @@ searchClear.addEventListener('click',()=>{
 });
 
 // Init
-allArticles=getArticles()
-  .filter(a=>a.status==='published')
-  .sort((a,b)=>{
-    const da=a.date||a.createdAt||0;
-    const db=b.date||b.createdAt||0;
-    return da>db?-1:da<db?1:0;
-  });
-
-buildFilters(allArticles);
-render();
-renderSocials();
+(async()=>{
+  allArticles=await getArticles();
+  buildFilters(allArticles);
+  render();
+  renderSocials();
+})();
 
 // Nav scroll
 const navEl=document.getElementById('nav');

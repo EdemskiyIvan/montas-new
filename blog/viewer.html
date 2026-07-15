@@ -158,8 +158,6 @@ img{display:block;max-width:100%}
 </div>
 
 <script>
-const DB_KEY = 'montas_articles';
-
 const TEAM = {
   'Илья Берман':         {role:'Генеральный директор',    photo:'../assets/team-1.png'},
   'Иван Едемский':       {role:'Технический директор',    photo:'../assets/team-2.png'},
@@ -169,8 +167,8 @@ const TEAM = {
   'Тася Шеломова':       {role:'Руководитель отдела дизайна', photo:'../assets/team-6.png'},
 };
 
-function getArticles(){
-  try{const r=localStorage.getItem(DB_KEY);return r?JSON.parse(r):[];}catch{return [];}
+async function getArticles(){
+  try{return await fetch('/api/posts').then(r=>r.json());}catch{return [];}
 }
 
 function fmtDate(d){
@@ -248,7 +246,7 @@ function buildRelated(articles, currentId){
     const imgHtml=a.cover
       ?`<img src="${a.cover}" alt="${a.title||''}">`
       :`<div class="related-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:28px;height:28px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>`;
-    return `<a href="viewer.html?id=${a.id}" class="related-card">
+    return `<a href="viewer.html?slug=${encodeURIComponent(a.slug)}" class="related-card">
       <div class="related-card-img">${imgHtml}</div>
       <div class="related-card-body">
         <div class="related-card-tag">${a.category||'Блог'}</div>
@@ -265,12 +263,12 @@ function buildRelated(articles, currentId){
   </div>`;
 }
 
-function render(){
+async function render(){
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
   const slug=params.get('slug');
-  const articles=getArticles();
-  const art=id?articles.find(a=>a.id===id):articles.find(a=>a.slug===slug);
+  const articles=await getArticles();
+  const art=id?articles.find(a=>String(a.id)===String(id)):articles.find(a=>a.slug===slug);
   const root=document.getElementById('page-root');
 
   if(!art){
