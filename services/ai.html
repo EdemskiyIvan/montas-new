@@ -17,7 +17,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--paper
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 .nav{position:fixed;left:0;right:0;top:0;z-index:100;width:100%;background:var(--paper);border-bottom:1px solid var(--line)}
-.nav-inner{width:100%;max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,64px);height:64px;gap:24px}
+.nav-inner{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,4vw,64px);height:72px;gap:32px}
 .nav-logo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;letter-spacing:-.01em}
 .nav-sq{width:8px;height:8px;background:var(--accent);flex-shrink:0}
 .nav-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);transition:color .15s}
@@ -75,10 +75,11 @@ img{display:block;max-width:100%}
 .footer-simple-copy{font-size:11px;color:rgba(255,255,255,.35)}
 @media(max-width:860px){.srv-hero{grid-template-columns:1fr}.srv-hero-img{display:none}.srv-stats-inner{grid-template-columns:1fr 1fr}.srv-list{grid-template-columns:1fr}.proc-list{grid-template-columns:1fr 1fr}.srv-cta-inner{flex-direction:column;align-items:flex-start}}
 @media(max-width:560px){.proc-list{grid-template-columns:1fr}.srv-hero-btns{flex-direction:column;align-items:flex-start}.nav-cta{display:none}}
+.nav-logo-img{height:26px;width:auto;display:block}.footer-logo-img{height:22px;width:auto;display:block}
 </style>
 </head>
 <body>
-<header class="nav"><div class="nav-inner"><a href="/" class="nav-logo"><div class="nav-sq"></div>MONTAS</a><a href="/#services" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Все услуги</a><a href="/#contact" class="nav-cta">Оставить заявку</a></div></header>
+<header class="nav"><div class="nav-inner"><a href="/" class="nav-logo"><img src="/assets/logo.svg" alt="MONTAS" class="nav-logo-img"></a><a href="/#services" class="nav-back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Все услуги</a><a href="/#contact" class="nav-cta">Оставить заявку</a></div></header>
 <div class="page">
   <div class="srv-hero">
     <div>
@@ -113,7 +114,8 @@ img{display:block;max-width:100%}
     <div class="proc-item"><div class="proc-num">06</div><h3>Отчётность</h3><p>Ежемесячный разбор метрик и корректировка стратегии</p></div>
   </div></div></div>
   <div class="srv-cta"><div class="srv-cta-inner"><h2>Готовы автоматизировать бизнес с помощью AI?</h2><div class="srv-cta-btns"><a href="/#contact" class="btn-white">Оставить заявку</a><a href="/#cases" class="btn-ghost">Смотреть кейсы</a></div></div></div>
-  <footer class="footer-simple"><div class="footer-simple-inner"><a href="/" class="footer-simple-logo"><div style="width:8px;height:8px;background:#1a5cff;flex-shrink:0"></div>MONTAS</a><span class="footer-simple-copy">© 2026 Montas. Все права защищены.</span></div></footer>
+  <footer class="footer-simple"><div class="footer-simple-inner"><a href="/" class="footer-simple-logo"><img src="/assets/logo.svg" alt="MONTAS" class="footer-logo-img"></a><span class="footer-simple-copy">© 2026 Montas. Все права защищены.</span></div></footer>
 </div>
+<script src="/assets/lead-popup.js"></script>
 </body>
 </html>
