@@ -1,3 +1,4 @@
 admin/config.js
 .env*
 !.env.example
+.vercel
