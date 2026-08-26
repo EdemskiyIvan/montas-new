@@ -1,6 +1,8 @@
 (function(){
 'use strict';
 
+if (true) return; // lang switch temporarily hidden — flip to false to re-enable
+
 const css=`
 .lang-switch{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;letter-spacing:.02em;margin-right:14px}
 .lang-switch a{color:rgba(14,15,12,.4);transition:color .15s;text-decoration:none}
