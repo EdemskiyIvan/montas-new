@@ -763,7 +763,7 @@ button{font-family:inherit}
 const AUTH_KEY = 'montas_admin_auth';
 // On the Vercel preview API calls are proxied to the existing MONTAS backend.
 // The production domain keeps its same-origin API path.
-const API = location.hostname.endsWith('.vercel.app') ? '/backend' : '';
+const API = '';
 let JWT_TOKEN = sessionStorage.getItem('montas_jwt') || '';
 
 // ── API HELPER ──

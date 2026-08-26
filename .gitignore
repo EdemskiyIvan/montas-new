@@ -2,3 +2,7 @@ admin/config.js
 .env*
 !.env.example
 .vercel
+node_modules
+.agents
+.claude
+skills-lock.json
