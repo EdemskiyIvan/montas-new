@@ -7,7 +7,12 @@ export default async function handler(req, res) {
   await ensureSchema();
 
   if (req.method === 'GET') {
-    const rows = await sql`SELECT * FROM posts WHERE status = 'published' ORDER BY created_at DESC`;
+    const lang = req.query.lang === 'en' ? 'en' : 'ru';
+    const rows = await sql`
+      SELECT * FROM posts
+      WHERE status = 'published' AND COALESCE(data->>'lang', 'ru') = ${lang}
+      ORDER BY created_at DESC
+    `;
     return res.status(200).json(rows.map(rowToItem));
   }
 
